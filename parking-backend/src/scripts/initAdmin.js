@@ -9,7 +9,7 @@ const initAdminUser = async () => {
     
     // Verificar si ya existe
     const [existing] = await pool.execute(
-      'SELECT id FROM Users WHERE username = ?',
+      'SELECT id FROM users WHERE username = ?',
       [username]
     );
 
@@ -23,7 +23,7 @@ const initAdminUser = async () => {
     const userId = require('crypto').randomUUID();
     
     await pool.execute(
-      'INSERT INTO Users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
       [userId, username, hashedPassword, 'admin@parqueadero.com', 'ADMIN']
     );
 

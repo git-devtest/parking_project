@@ -1,0 +1,96 @@
+<div class="card">
+  <h2 class="section-title">Copias de Seguridad</h2>
+
+  <p class="backup-info">
+    Aquí puedes generar manualmente una copia de seguridad de toda la base de datos.
+    Disponibles en formato JSON para auditoría y MySQL como respaldo de la base de datos.
+  </p>
+
+  <div class="backup-container">
+
+    <!-- Botón de backup simple -->
+    <button (click)="createBackup()" [disabled]="loading" class="backup-btn">
+      {{ loading ? "Creando Backup..." : "Crear Backup Simple" }}
+    </button>
+    <button (click)="createSqlBackup()" [disabled]="loading" class="backup-btn">
+      {{ loading ? "Creando Backup..." : "Crear Backup SQL" }}
+    </button>
+
+    <p *ngIf="backupFile" class="success-msg">
+      Backup generado: {{ backupFile }}
+    </p>
+
+  </div>
+
+  <hr>
+
+  <h3>Histórico de Backups</h3>
+  <div *ngIf="loading" class="loading">Cargando backups...</div>
+  <p *ngIf="!loading && backups.length === 0" class="no-backups">No hay copias de seguridad disponibles.</p>
+
+  <table class="backup-table" *ngIf="!loading && backups.length > 0">
+    <thead>
+      <tr>
+        <th>Archivo</th>
+        <th>Tipo</th>
+        <th>Fecha</th>
+        <th>Tamaño</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let backup of backups">
+        <td>{{ backup.filename }}</td>
+        <td>
+          <span [class]="'badge ' + (backup.type === 'sql' ? 'badge-sql' : 'badge-json')">
+            {{ backup.type === 'sql' ? 'SQL' : 'JSON' }}
+          </span>
+        </td>
+        <td>{{ backup.readableDate || (backup.createdAt | date: 'dd/MM/yyyy HH:mm') }}</td>
+        <td>{{ backup.sizeMB || (backup.size / (1024*1024) | number:'1.2-2') }} MB</td>
+        <td class="actions">
+          <!-- Botón Ver (solo para JSON) -->
+          <button *ngIf="backup.type === 'json'" 
+            (click)="viewJsonBackup(backup)"
+            [disabled]="viewingBackup"
+            class="view-btn">
+            {{ viewingBackup && selectedBackup?.filename === backup.filename ? 'Cargando...' : 'Ver' }}
+          </button>
+          <button (click)="downloadBackup(backup)" [disabled]="downloading" class="download-btn">
+            {{ downloading ? "Descargando..." : "Descargar" }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal para visualizar JSON -->
+  <div *ngIf="viewingBackup" class="modal-overlay" style="border: 3px solid red;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Contenido del Backup: {{ selectedBackup?.filename }}</h3>
+
+        </div>
+        <div class="modal-body">
+            <div class="backup-info">
+              <div *ngIf="backupContent" class="backup-info">
+                <p><strong>Tablas:</strong> {{ getTableCount() }}</p>
+                <p><strong>Total registros:</strong> {{ getTotalRecords() }}</p>
+                <p><strong>Fecha generación:</strong> {{ getLocalTimestamp() }}</p>
+              </div>
+                
+            </div>
+            
+            <div *ngIf="backupContent" class="json-viewer">
+                <pre>{{ backupContent | json }}</pre>
+            </div>
+            <div *ngIf="!backupContent" style="color: orange;">
+                ⚠️ Esperando contenido del backup...
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button (click)="closeView()" class="btn btn-secondary">Cerrar</button>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<h2 class="section-title">Auditoría del Sistema</h2>
+
+<div class="card">
+  
+  <div class="table-container">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <!-- <th>ID Registro</th> -->
+          <th>Timestamp</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Tablas Afectadas</th>
+          <th>SQL Ejecutado</th>
+          <th>SQL Rollback</th>
+          <th>IP Cliente</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="isLoading">
+          <td colspan="5" class="loading-text">Cargando registros...</td>
+        </tr>
+
+        <tr *ngFor="let log of logs">
+          <!-- <td>{{ log.id }}</td> -->
+          <td style="white-space: nowrap;">{{ formatDateTime(log.fecha_evento) }} </td>
+          <td>{{ log.usuario }}</td>
+          <td>
+            <span class="badge" 
+              [ngClass]="{
+                'badge-insert': log.accion === 'INSERT',
+                'badge-update': log.accion === 'UPDATE',
+                'badge-delete': log.accion === 'DELETE',
+                'badge-downloadBackup': log.accion === 'BACKUP_DOWNLOAD',
+                'badge-createBackup': log.accion === 'BACKUP_CREATE',
+                'badge-viewJsonBackup': log.accion === 'BACKUP_VIEW'
+              }">
+              {{ log.accion }}
+            </span>
+          </td>
+          <td>{{ log.tabla_afectada }}</td>
+          <td>
+            <button class="audit-btn" (click)="openSqlModal(log.sql_ejecutado)">Ver SQL</button>
+          </td>
+          <td>
+            <button class="audit-btn secondary" (click)="openRollbackModal(log.sql_rollback)">Ver Rollback</button>
+          </td>
+          <td>{{ log.ip_cliente }}</td>
+        </tr>
+
+        <tr *ngIf="!isLoading && logs.length === 0">
+          <td colspan="5" class="empty-text">No hay registros</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+  </div>
+
+<!-- === MODALES === -->
+<!-- SQL ejecutado -->
+<div class="modal-backdrop" *ngIf="showSqlModal">
+  <div class="modal-window">
+    <h3>SQL Ejecutado</h3>
+    <pre class="sql-box" *ngIf="selectedSqlSafe" [innerHTML]="selectedSqlSafe"></pre>
+    <button class="close-btn" (click)="closeModals()">Cerrar</button>
+  </div>
+</div>
+
+<!-- SQL rollback -->
+<div class="modal-backdrop" *ngIf="showRollbackModal">
+  <div class="modal-window">
+    <h3>SQL Rollback</h3>
+    <pre class="sql-box rollback" *ngIf="selectedRollbackSafe" [innerHTML]="selectedRollbackSafe"></pre>
+    <button class="close-btn" (click)="closeModals()">Cerrar</button>
+  </div>
+</div>
+
+</div>

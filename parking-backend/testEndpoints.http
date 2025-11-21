@@ -1,0 +1,5 @@
+GET http://localhost:3000/health
+### Check if the server is running and healthy
+
+GET http://localhost:3000/api/backups
+### List all backup files

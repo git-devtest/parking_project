@@ -11,8 +11,8 @@ export interface DatabaseInfo {
   providedIn: 'root'
 })
 export class AppInfoService {
-  //private apiUrl = 'http://localhost:3000/api/info';
-  private apiUrl = 'http://192.168.0.100:3000/api/info';
+  private apiUrl = 'http://localhost:3000/api/info';
+  //private apiUrl = 'http://192.168.0.100:3000/api/info';
 
   constructor(
     private http: HttpClient, 

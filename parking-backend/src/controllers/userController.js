@@ -56,13 +56,12 @@ class UserController {
       // Crear usuario (modelo debe insertar hashed password)
       await User.create({ id, username, password: hashed, email, role: role || 'OPERATOR' });
 
+      const safeUsername = sanitize(username);
+      const safeEmail = sanitize(email);
+
       // Construir SQL descriptivo y rollback (NO incluimos la contraseña)
-      const sqlExecuted = `INSERT INTO Users (id, username, email, role) VALUES ('${id}','${username}','${email}','${role || 'OPERATOR'}');`;
-      const sqlRollback = `UPDATE Users SET isActive = FALSE WHERE id='${id}';`;
-
-
-      // Registrar auditoría
-      await auditService.getAuditLogs ? /* si tu service tiene otro nombre */ null : null;
+      const sqlExecuted = `INSERT INTO users (id, username, email, role) VALUES ('${id}','${safeUsername}','${safeEmail}','${role || 'OPERATOR'}');`;
+      const sqlRollback = `UPDATE users SET isActive = FALSE WHERE id='${id}';`;
 
       const rawIp = req.ip || req.connection.remoteAddress || "unknown";
       const ip = (rawIp === "::1" || rawIp === "127.0.0.1" ? "localhost" : rawIp);
@@ -71,7 +70,7 @@ class UserController {
       await auditService.createLog({
         usuario: req.user.username,
         accion: 'INSERT',
-        tabla_afectada: 'Users',
+        tabla_afectada: 'users',
         registro_id: id,
         sql_ejecutado: sqlExecuted,
         sql_rollback: sqlRollback,
@@ -209,26 +208,33 @@ async updateUser(req, res) {
       sqlExecutedParts.push(`password='[ENCRYPTED]'`);
     }
 
-    const sqlExecuted = `UPDATE Users SET ${sqlExecutedParts.join(", ")} WHERE id='${id}';`;
+    function sanitize(v) {
+      if (typeof v !== "string") return v;
+      return v.replace(/'/g, "\\'");
+    }
+
+    const sqlExecuted = `UPDATE users SET ${sqlExecutedParts.join(", ")} WHERE id='${id}';`;
 
     // =============================
     // 6. Construir SQL ROLLBACK (estado previo)
     // =============================
     const sqlRollback = `
-      UPDATE Users SET
+      UPDATE users SET
         username='${exists.username}',
         email='${exists.email}',
-        role='${exists.role}'
+        role='${exists.role}',
+        isActive=${exists.isActive ? 1 : 0},
+        password='${passwordWasUpdated ? exists.password : "[UNCHANGED]"}'
       WHERE id='${id}';
     `.trim();
 
     // =============================
     // 7. Ejecutar UPDATE real
     // =============================
-    const updateSql = `UPDATE Users SET ${fields.join(", ")} WHERE id = ?`;
+    const updateSql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
     values.push(id);
 
-    const [result] = await pool.execute(updateSql, values);
+    const [result] = await pool.query(updateSql, values);
 
     // =============================
     // 8. IP normalizada
@@ -242,7 +248,7 @@ async updateUser(req, res) {
     await auditService.createLog({
       usuario: req.user.username,
       accion: "UPDATE",
-      tabla_afectada: "Users",
+      tabla_afectada: "users",
       registro_id: id,
       sql_ejecutado: sqlExecuted,
       sql_rollback: sqlRollback,
@@ -279,8 +285,8 @@ async updateUser(req, res) {
       if (!exists) return res.status(404).json({ success: false, message: 'User not found' });
 
       // sql ejecutado y rollback
-      const sqlExecuted = `UPDATE Users SET isActive = FALSE WHERE id='${id}';`;
-      const sqlRollback = `UPDATE Users SET isActive = TRUE WHERE id='${id}';`;
+      const sqlExecuted = `UPDATE users SET isActive = FALSE WHERE id='${id}';`;
+      const sqlRollback = `UPDATE users SET isActive = TRUE WHERE id='${id}';`;
 
       await User.delete(id); // soft delete
 
@@ -290,7 +296,7 @@ async updateUser(req, res) {
       await auditService.createLog({
         usuario: req.user.username,
         accion: 'DELETE',
-        tabla_afectada: 'Users',
+        tabla_afectada: 'users',
         registro_id: id,
         sql_ejecutado: sqlExecuted,
         sql_rollback: sqlRollback,

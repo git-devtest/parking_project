@@ -1,11 +1,10 @@
 const { pool } = require('../config/database');
 const bcrypt = require('bcrypt');
 const logger = require('../config/logger');
-const User = require('../models/User');
 
 const getUserByUsername = async (username) => {
-  const [rows] = await pool.execute(
-    'SELECT id, username, password, email, role FROM Users WHERE username = ?', 
+  const [rows] = await pool.query(
+    'SELECT id, username, password, email, role FROM users WHERE username = ?', 
     [username]
   );
   return rows[0];
@@ -14,8 +13,8 @@ const getUserByUsername = async (username) => {
 const createUser = async (username, password, email, role = 'USER') => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const userId = require('crypto').randomUUID();
-    await pool.execute(
-    'INSERT INTO Users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
+    await pool.query(
+    'INSERT INTO users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
     [userId, username, hashedPassword, email, role]
   );
   logger.info(`Usuario creado: ${username} con rol: ${role}`);

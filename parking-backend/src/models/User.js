@@ -6,8 +6,8 @@ class User {
   // Crear usuario
   static async create({ id, username, password, email, role = 'OPERATOR' }) {
     
-    await pool.execute(
-      `INSERT INTO Users (id, username, password, email, role)
+    await pool.query(
+      `INSERT INTO users (id, username, password, email, role)
        VALUES (?, ?, ?, ?, ?)`,
       [id, username, password, email, role]
     );
@@ -18,9 +18,9 @@ class User {
 
   // Buscar por username (para login)
   static async findByUsername(username) {
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT id, username, password, email, role, isActive, createdAt
-       FROM Users
+       FROM users
        WHERE username = ? AND isActive = TRUE`,
       [username]
     );
@@ -29,9 +29,13 @@ class User {
 
   // Buscar por ID
   static async findById(id) {
-    const [rows] = await pool.execute(
+    if (!id) {
+      throw new Error("User ID is required");
+    }
+
+    const [rows] = await pool.query(
       `SELECT id, username, email, role, isActive, createdAt
-       FROM Users
+       FROM users
        WHERE id = ?`,
       [id]
     );
@@ -40,9 +44,9 @@ class User {
 
   // Listar usuarios (con paginación opcional)
   static async getAll(limit = 20, offset = 0) {
-    const [rows] = await pool.execute(
+    const [rows] = await pool.query(
       `SELECT id, username, email, role, isActive, createdAt
-       FROM Users
+       FROM users
        LIMIT ? OFFSET ?`,
       [limit, offset]
     );
@@ -51,8 +55,8 @@ class User {
 
   // Total usuarios para paginación
   static async count() {
-    const [rows] = await pool.execute(
-      `SELECT COUNT(*) AS total FROM Users WHERE isActive = TRUE`
+    const [rows] = await pool.query(
+      `SELECT COUNT(*) AS total FROM users WHERE isActive = TRUE`
     );
     return rows[0].total;
   }
@@ -77,8 +81,8 @@ class User {
 
     values.push(id);
 
-    await pool.execute(
-      `UPDATE Users SET ${fields.join(', ')} WHERE id = ?`,
+    await pool.query(
+      `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
       values
     );
 
@@ -87,8 +91,8 @@ class User {
 
   // Soft delete (inactivar)
   static async delete(id) {
-    await pool.execute(
-      `UPDATE Users SET isActive = FALSE WHERE id = ?`,
+    await pool.query(
+      `UPDATE users SET isActive = FALSE WHERE id = ?`,
       [id]
     );
     return true;

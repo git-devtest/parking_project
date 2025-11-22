@@ -1,4 +1,4 @@
-// src/app/components/dashboard/users/users.component.ts
+// src/app/components/dashboard/users/users.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersService } from '../../../services/users.service';
@@ -137,20 +137,6 @@ export class UsersComponent implements OnInit {
       });
     }
   }
-
-  /*createUser() {
-    this.usersService.createUser(this.form).subscribe(() => {
-      this.closeModals();
-      this.loadUsers();
-    });
-  }
-
-  updateUser() {
-    this.usersService.updateUser(this.selectedUser.id, this.form).subscribe(() => {
-      this.closeModals();
-      this.loadUsers();
-    });
-  }*/
 
   confirmDelete() {
     this.usersService.deleteUser(this.selectedUser.id).subscribe(() => {

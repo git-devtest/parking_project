@@ -5,8 +5,8 @@ class ReportService {
   async getDailyReport(range = 'today') {
     // Obtener el reporte diario basado en el rango especificado desde la vista DailyIncomeReport
     try {
-      const [rows] = await pool.execute(
-        `SELECT * FROM DailyIncomeReport 
+      const [rows] = await pool.query(
+        `SELECT * FROM dailyincomereport 
          WHERE report_date >= (SELECT GetDateRange(?))
          ORDER BY report_date DESC, vehicleType`,
         [range]
@@ -34,31 +34,31 @@ class ReportService {
   async getDashboardData() {
     try {
       // Vehículos estacionados actualmente
-      const [parkedVehicles] = await pool.execute(`
+      const [parkedVehicles] = await pool.query(`
         SELECT vehicleType, COUNT(*) as count 
-        FROM Vehicle 
+        FROM vehicle 
         WHERE status = 'PARKED' 
         GROUP BY vehicleType
       `);
 
       // Ingresos del día
-      const [todayIncome] = await pool.execute(`
+      const [todayIncome] = await pool.query(`
         SELECT COALESCE(SUM(amount), 0) as income 
-        FROM ParkingSession 
+        FROM parkingsession 
         WHERE DATE(exitTime) = CURDATE() 
         AND status = 'COMPLETED'
       `);
 
       // Vehículos atendidos hoy
-      const [todayVehicles] = await pool.execute(`
+      const [todayVehicles] = await pool.query(`
         SELECT COUNT(*) as count 
-        FROM ParkingSession 
+        FROM parkingsession 
         WHERE DATE(exitTime) = CURDATE()
         AND status = 'COMPLETED'
       `);
 
       // Capacidad
-      const [capacity] = await pool.execute('SELECT * FROM ParkingSpacesAvailable');
+      const [capacity] = await pool.query('SELECT * FROM parkingspacesavailable');
 
       return {
         success: true,
@@ -77,7 +77,7 @@ class ReportService {
 
   async getCustomReport(startDate, endDate) {
     try {
-      const [rows] = await pool.execute(`
+      const [rows] = await pool.query(`
         SELECT 
           DATE(ps.exitTime) as report_date,
           ps.vehicleType,
@@ -85,8 +85,8 @@ class ReportService {
           COUNT(*) as vehicles_served,
           COALESCE(SUM(ps.amount), 0) as total_income,
           AVG(ps.duration) as avg_duration_minutes
-        FROM ParkingSession ps
-        JOIN VehicleType vt ON ps.vehicleType = vt.type_name
+        FROM parkingsession ps
+        JOIN vehicletype vt ON ps.vehicleType = vt.type_name
         WHERE ps.status = 'COMPLETED' 
           AND DATE(ps.exitTime) BETWEEN ? AND ?
         GROUP BY DATE(ps.exitTime), ps.vehicleType, vt.description

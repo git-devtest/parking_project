@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuditService {
-  //private baseUrl = `http://localhost:3000/api/audit/dashboard`;
-  private baseUrl = `http://192.168.0.100:3000/api/audit/dashboard`;
+  private baseUrl = `http://localhost:3000/api/audit/dashboard`;
+  //private baseUrl = `http://192.168.0.100:3000/api/audit/dashboard`;
 
 
   constructor(private http: HttpClient) {}

@@ -8,7 +8,7 @@ class AuditService {
         try {
             const offset = (page - 1) * limit;
 
-            const [rows] = await pool.execute(
+            const [rows] = await pool.query(
                 `SELECT id, usuario, accion, tabla_afectada, registro_id, 
                         sql_ejecutado, sql_rollback, ip_cliente, fecha_evento
                 FROM audit_log
@@ -17,7 +17,7 @@ class AuditService {
                 [limit, offset]
             );
 
-            const [[{ total }]] = await pool.execute(
+            const [[{ total }]] = await pool.query(
                 `SELECT COUNT(*) AS total FROM audit_log`
             );
 
@@ -42,7 +42,7 @@ class AuditService {
     async getAuditLogsDaily(range = 'today') {
         // Obtener los logs de auditoría basados en el rango especificado
         try {
-            const [rows] = await pool.execute(
+            const [rows] = await pool.query(
                 `SELECT 
                 id, 
                 usuario, 
@@ -70,7 +70,7 @@ class AuditService {
     async getAuditLogCustom(startDate, endDate) {
         // Obtener los logs de auditoría basados en un rango de fechas personalizado
         try {
-            const [rows] = await pool.execute(
+            const [rows] = await pool.query(
                 `SELECT
                 id, 
                 usuario, 
@@ -103,7 +103,7 @@ class AuditService {
             const cleanSQL = sql_ejecutado?.toString().trim() || '';
             const cleanRollback = sql_rollback?.toString().trim() || null;
 
-            await pool.execute(
+            await pool.query(
                 `INSERT INTO audit_log 
                 (usuario, accion, tabla_afectada, registro_id, sql_ejecutado, sql_rollback, ip_cliente, fecha_evento)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,

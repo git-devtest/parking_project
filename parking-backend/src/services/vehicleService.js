@@ -8,7 +8,7 @@ class VehicleService {
       await connection.beginTransaction();
 
       // Registrar entrada usando el stored procedure
-      const [result] = await connection.execute(
+      const [result] = await connection.query(
         'CALL RegisterVehicleEntry(?, ?, ?)',
         [plateNumber, vehicleType, user]
       );
@@ -36,7 +36,7 @@ class VehicleService {
       await connection.beginTransaction();
       
       // Registrar salida usando el stored procedure
-      const [result] = await connection.execute(
+      const [result] = await connection.query(
         'CALL RegisterVehicleExit(?, ?)',
         [plateNumber, user]
       );
@@ -61,8 +61,8 @@ class VehicleService {
   async getParkedVehicles() {
     // Obtener vehículos actualmente estacionados desde la vista
     try {
-      const [rows] = await pool.execute(`
-        SELECT * FROM CurrentParkedVehicles 
+      const [rows] = await pool.query(`
+        SELECT * FROM currentparkedvehicles 
         ORDER BY entryTime DESC
       `);
 
@@ -80,7 +80,7 @@ class VehicleService {
   async getParkingCapacity() {
     // Obtener capacidad de estacionamiento desde la vista
     try {
-      const [rows] = await pool.execute('SELECT * FROM ParkingSpacesAvailable');
+      const [rows] = await pool.query('SELECT * FROM parkingspacesavailable');
 
       return {
         success: true,
@@ -95,27 +95,28 @@ class VehicleService {
   async getVehicleHistory(page = 1, limit = 20) {
     // Obtener historial de vehículos con paginación desde la vista
     try {
+
+      // Normalizar y validar entrada (vienen como strings desde req.query)
+      page  = Number(page)  || 1;
+      limit = Number(limit) || 20;
+
+      if (limit <= 0) limit = 20;
+      if (page <= 0) page = 1;
+
       const offset = (page - 1) * limit;
 
-      const [rows] = await pool.execute(`
-        SELECT * FROM VehicleHistory 
+      // DEBUG opcional para ver parámetros exactos en los logs
+      logger.info(`getVehicleHistory - page:${page} limit:${limit} offset:${offset}`);
+
+      const [rows] = await pool.query(`
+        SELECT * FROM vehiclehistory 
         ORDER BY entryTime DESC 
         LIMIT ? OFFSET ?
       `, [limit, offset]);
 
-      const [[{ total }]] = await pool.execute(
-        'SELECT COUNT(*) as total FROM VehicleHistory'
+      const [[{ total }]] = await pool.query(
+        'SELECT COUNT(*) as total FROM vehiclehistory'
       );
-
-       // DEBUG: Ver qué valores se están calculando
-      console.log('DEBUG Pagination:', {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total: total,
-        pages: Math.ceil(total / limit),
-        offset: offset,
-        rowsReturned: rows.length
-      });
 
       return {
         success: true,

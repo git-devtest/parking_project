@@ -29,8 +29,8 @@ interface ProgressData {
 })
 export class BackupService {
 
-  //private apiUrl = 'http://localhost:3000/api/backups';
-  private apiUrl = 'http://192.168.0.100:3000/api/backups';
+  private apiUrl = 'http://localhost:3000/api/backups';
+  //private apiUrl = 'http://192.168.0.100:3000/api/backups';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

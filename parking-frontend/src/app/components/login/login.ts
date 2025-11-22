@@ -42,11 +42,6 @@ export class Login {
         }
       },
       error: err => { alert(err.message); }
-      /*error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Error en el login';
-        console.error('Login error:', error);
-      }*/
     });
   }
 }

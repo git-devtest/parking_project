@@ -5,7 +5,7 @@ const getDatabaseInfo = async () => {
   let connection;
   try {
     connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT DATABASE() AS dbName, VERSION() AS dbVersion');
+    const [rows] = await connection.query('SELECT DATABASE() AS dbName, VERSION() AS dbVersion');
     connection.release();
     return {
       name: rows[0].dbName,

@@ -1,3 +1,9 @@
+require('dotenv').config();
+const app = require('./src/app');
+const { testConnection, closePool } = require('./src/config/database');
+const { checkDatabaseStructure } = require('./src/utils/dbCheck');
+const logger = require('./src/utils/logger');
+
 // =============================================
 // CONFIGURACIÓN DE ZONA HORARIA
 // =============================================
@@ -5,12 +11,6 @@ process.env.TZ = 'America/Bogota'; // Ajusta según tu país
 console.log('🕐 Servidor configurado con zona horaria:', process.env.TZ);
 console.log('📍 Hora actual del servidor:', new Date().toString());
 // =============================================
-
-require('dotenv').config();
-const app = require('./src/app');
-const { testConnection, closePool } = require('./src/config/database');
-const { checkDatabaseStructure } = require('./src/utils/dbCheck');
-const logger = require('./src/utils/logger');
 
 // Import script to initialize admin user
 const initAdminUser = require('./src/scripts/initAdmin');

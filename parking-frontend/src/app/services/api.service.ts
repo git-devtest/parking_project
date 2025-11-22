@@ -74,8 +74,8 @@ export interface DashboardData {
   providedIn: 'root'
 })
 export class ApiService {
-  //private baseUrl = 'http://localhost:3000/api';
-  private baseUrl = 'http://192.168.0.100:3000/api';
+  private baseUrl = 'http://localhost:3000/api';
+  //private baseUrl = 'http://192.168.0.100:3000/api';
 
   constructor(
     private http: HttpClient,

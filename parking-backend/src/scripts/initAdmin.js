@@ -8,7 +8,7 @@ const initAdminUser = async () => {
     const password = process.env.ADMIN_PASSWORD || 'admin123';
     
     // Verificar si ya existe
-    const [existing] = await pool.execute(
+    const [existing] = await pool.query(
       'SELECT id FROM users WHERE username = ?',
       [username]
     );
@@ -22,7 +22,7 @@ const initAdminUser = async () => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const userId = require('crypto').randomUUID();
     
-    await pool.execute(
+    await pool.query(
       'INSERT INTO users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
       [userId, username, hashedPassword, 'admin@parqueadero.com', 'ADMIN']
     );

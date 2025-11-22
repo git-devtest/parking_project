@@ -8,8 +8,6 @@ import { AuditTrailComponent } from './audit-trail/audit-trail';
 import { UsersService } from '../../services/users.service';
 import { UsersComponent } from './users/users';
 import { BackupsComponent } from './backups/backups';
-import { B } from '@angular/cdk/keycodes';
-
 
 interface DashboardStats {
   parkedVehicles: number;
@@ -121,7 +119,7 @@ export class Dashboard implements OnInit, OnDestroy {
     });
 
     this.usersService.getUsers().subscribe({
-      //next: res => console.log("USERS OK:", res),
+      next: res => console.log("USERS OK:", res),
       error: err => console.error("ERROR USERS:", err)
     });
   }
@@ -153,10 +151,6 @@ export class Dashboard implements OnInit, OnDestroy {
         }
       },
       error: err => { alert(err.message); }
-      /*error: (error: any) => {
-        this.isLoading = false;
-        console.error('Error loading dashboard data:', error);
-      }*/
     });
 
     // Cargar vehículos estacionados
@@ -237,12 +231,6 @@ export class Dashboard implements OnInit, OnDestroy {
         }
       },
       error: err => { alert(err.message);  }
-      /*error: (error: any) => {
-        this.isRegistering = false;
-        const errorMsg = error.error?.message || 'Error al registrar la entrada';
-        this.showEntryAlert(`❌ ${errorMsg}`, 'error');
-        console.error('Error registering vehicle:', error);
-      }*/
     });
   }
 
@@ -277,11 +265,6 @@ export class Dashboard implements OnInit, OnDestroy {
       }
     },
     error: err => { alert(err.message); }
-      /*error: (error: any) => {
-      console.error('Error loading parked vehicles:', error);
-      this.parkedVehicles = [];
-      this.filteredParkedVehicles = [];
-    }*/
   });
 }
 
@@ -317,12 +300,6 @@ export class Dashboard implements OnInit, OnDestroy {
         }
       },
       error: err => { alert(err.message); }
-      /*error: (error: any) => {
-        this.isProcessingExit = null;
-        const errorMsg = error.error?.message || 'Error al registrar la salida';
-        this.showEntryAlert(`❌ ${errorMsg}`, 'error');
-        console.error('Error registering vehicle exit:', error);
-      }*/
     });
   }
 
@@ -395,12 +372,6 @@ export class Dashboard implements OnInit, OnDestroy {
         }
       },
       error: err => { alert(err.message); }
-      /*error: (error: any) => {
-        console.error('Error loading vehicle history:', error);
-        this.vehicleHistory = [];
-        this.filteredVehicleHistory = [];
-        this.paginatedHistory = [];
-      }*/
     });
   }
 
@@ -421,14 +392,6 @@ export class Dashboard implements OnInit, OnDestroy {
     }
     this.paginatedHistory = this.filteredVehicleHistory;
   }
-
-  // Paginación
-  /*updatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredVehicleHistory.length / this.itemsPerPage);
-    this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    this.endIndex = Math.min(this.startIndex + this.itemsPerPage, this.filteredVehicleHistory.length);
-    this.paginatedHistory = this.filteredVehicleHistory.slice(this.startIndex, this.endIndex);
-  }*/
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {

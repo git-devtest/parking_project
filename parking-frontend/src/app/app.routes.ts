@@ -4,7 +4,7 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { UsersComponent } from './components/dashboard/users/users';
 import { AuditTrailComponent } from './components/dashboard/audit-trail/audit-trail';
 import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role-guard';
+import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },

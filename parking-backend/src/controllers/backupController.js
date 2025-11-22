@@ -56,7 +56,7 @@ class BackupController {
             for (const table of tables) {
                 try {
                     logger.info(`Exportando tabla: ${table}`);
-                    const [rows] = await connection.execute(`SELECT * FROM ${table}`);
+                    const [rows] = await connection.query(`SELECT * FROM ${table}`);
                     backupData.data[table] = rows;
                     logger.info(`Tabla ${table} exportada: ${rows.length} registros`);
                 } catch (tableError) {

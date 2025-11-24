@@ -302,18 +302,6 @@ class BackupController {
                 return total;
             };
 
-            // Auditoría de visualización
-            await auditService.createLog({
-                usuario: req.user.username,
-                accion: "BACKUP_VIEW",
-                tabla_afectada: "SYSTEM",
-                registro_id: 0,
-                sql_ejecutado: `VIEW JSON BACKUP: ${fileName}`,
-                sql_rollback: 'CANNOT ROLLBACK VIEW JSON FILE',
-                ip_cliente: req.ip,
-                fecha_evento: new Date()
-            });
-
             logger.info(`Backup JSON visualizado por ${req.user.username}: ${fileName}`);
 
             res.json({

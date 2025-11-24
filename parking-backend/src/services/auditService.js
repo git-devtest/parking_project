@@ -97,8 +97,6 @@ class AuditService {
     // Crear un nuevo log de auditoría
     async createLog({ usuario, accion, tabla_afectada, registro_id, sql_ejecutado, sql_rollback, ip_cliente, fecha_evento }) {
         try {
-            console.log("AUDIT SERVICE → pool es:", typeof pool);
-
             // Evitar que un salto de línea rompa el formato del log SQL
             const cleanSQL = sql_ejecutado?.toString().trim() || '';
             const cleanRollback = sql_rollback?.toString().trim() || null;

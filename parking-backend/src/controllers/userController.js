@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const { pool } = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const auditService = require('../services/auditService'); // ajusta si tu service tiene otro nombre
@@ -24,6 +23,7 @@ class UserController {
   async getUserById(req, res) {
     try {
       const user = await User.findById(req.params.id);
+      logger.info(`GET /api/users/${req.params.id} by ${req.user?.username || 'anonymous'}`);
       if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
 
       // Solo ADMIN o el propio usuario pueden ver
@@ -32,7 +32,6 @@ class UserController {
         return res.status(403).json({ success: false, message: 'No autorizado' });
       }
 
-      logger.info(`GET /api/users/${req.params.id} by ${req.user.username}`);
       return res.json({ success: true, data: user });
     } catch (error) {
       logger.error(`Error getUserById: ${error.message}`, { error });
@@ -277,18 +276,20 @@ async updateUser(req, res) {
 }
 
 
-  // DELETE (soft delete) -> audit + logger
+  // DELETE (soft delete)
   async deleteUser(req, res) {
     try {
       const { id } = req.params;
       const exists = await User.findById(id);
+      logger.info(`GET /api/users/${id} by ${req.user?.username || 'anonymous'}`);
       if (!exists) return res.status(404).json({ success: false, message: 'User not found' });
 
       // sql ejecutado y rollback
       const sqlExecuted = `UPDATE users SET isActive = FALSE WHERE id='${id}';`;
       const sqlRollback = `UPDATE users SET isActive = TRUE WHERE id='${id}';`;
 
-      await User.delete(id); // soft delete
+      // Soft delete, consiste en marcar el usuario como inactivo
+      await User.delete(id);
 
       const rawIp = req.ip || req.connection.remoteAddress || "unknown";
       const ip = (rawIp === "::1" || rawIp === "127.0.0.1" ? "localhost" : rawIp);

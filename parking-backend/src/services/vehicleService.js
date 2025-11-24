@@ -15,7 +15,7 @@ class VehicleService {
 
       await connection.commit();
 
-      logger.info(`Entrada registrada: ${plateNumber} - ${vehicleType} - Usuario registra entrada: ${user}`);
+      logger.info(`Entrada registrada: ${plateNumber} - ${vehicleType}\nUsuario registra entrada: ${user}`);
       return {
         success: true,
         message: 'Entrada registrada exitosamente',
@@ -43,7 +43,7 @@ class VehicleService {
 
       await connection.commit();
 
-      logger.info(`Salida registrada: ${plateNumber}, Usuario registra salida: ${user}`);
+      logger.info(`Salida registrada: ${plateNumber},\nUsuario registra salida: ${user}`);
       return {
         success: true,
         message: 'Salida registrada exitosamente',
@@ -104,9 +104,6 @@ class VehicleService {
       if (page <= 0) page = 1;
 
       const offset = (page - 1) * limit;
-
-      // DEBUG opcional para ver parámetros exactos en los logs
-      logger.info(`getVehicleHistory - page:${page} limit:${limit} offset:${offset}`);
 
       const [rows] = await pool.query(`
         SELECT * FROM vehiclehistory 

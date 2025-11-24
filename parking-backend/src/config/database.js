@@ -26,10 +26,6 @@ pool.on('release', (connection) => {
   logger.info('🔄 Conexión liberada:', connection.threadId);
 });
 
-pool.on('enqueue', () => {
-  logger.warn('⏳ Solicitud en cola esperando conexión disponible');
-});
-
 // Test connection()
 const testConnection = async () => {
   try {

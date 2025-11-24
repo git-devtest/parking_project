@@ -17,7 +17,7 @@ class BackupSqlService {
             }
 
             logger.info(`🔄 Iniciando backup SQL: ${fileName}`);
-            const mysqldumpPath = `"C:\\xampp\\mysql\\bin\\mysqldump.exe"`;
+            const mysqldumpPath = `"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe"`;
             const command = `${mysqldumpPath} -h ${process.env.DB_HOST || 'localhost'} -u ${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" ${process.env.DB_NAME} > "${filePath}"`;
             console.log(`🔧 Comando: ${command}`);
             

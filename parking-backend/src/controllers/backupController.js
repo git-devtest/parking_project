@@ -79,12 +79,14 @@ class BackupController {
                 usuario: req.user.username,
                 accion: "BACKUP_CREATE",
                 tabla_afectada: "SYSTEM",
-                registro_id: fileName,
+                registro_id: 0,
                 sql_ejecutado: `GENERATED JSON BACKUP: ${fileName}`,
                 sql_rollback: 'CANNOT ROLLBACK FILE CREATION',
                 ip_cliente: req.ip,
                 fecha_evento: new Date()
             });
+
+            logger.info(`Backup JSON creado por ${req.user.username}: ${fileName}`);
 
             res.json({
                 success: true,
@@ -238,7 +240,7 @@ class BackupController {
                 usuario: req.user.username,
                 accion: "BACKUP_CREATE",
                 tabla_afectada: "SYSTEM",
-                registro_id: result.file,
+                registro_id: 0,
                 sql_ejecutado: `SQL BACKUP: ${result.file}`,
                 sql_rollback: `CANNOT ROLLBACK FILE CREATION`,
                 ip_cliente: req.ip,

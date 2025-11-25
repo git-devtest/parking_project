@@ -71,9 +71,6 @@ class BackupController {
             // guardar archivo .json
             fs.writeFileSync(filePath, JSON.stringify(backupData, null, 2));
 
-            logger.info(`Backup JSON creado por ${req.user?.username}: ${fileName} en ${seconds}s`);
-            console.log(`Backup JSON creado por ${req.user?.username}: ${fileName} en ${seconds}s`);
-
             // Auditoría
             await auditService.createLog({
                 usuario: req.user.username,
@@ -82,11 +79,11 @@ class BackupController {
                 registro_id: 0,
                 sql_ejecutado: `GENERATED JSON BACKUP: ${fileName}`,
                 sql_rollback: 'CANNOT ROLLBACK FILE CREATION',
-                ip_cliente: req.ip,
+                ip_cliente: getClientIp(req),
                 fecha_evento: new Date()
             });
 
-            logger.info(`Backup JSON creado por ${req.user.username}: ${fileName}`);
+            logger.info(`Backup JSON creado por ${req.user.username}: ${fileName}\ndesde IP: ${getClientIp(req)} en ${seconds}s`);
 
             res.json({
                 success: true,
@@ -209,18 +206,18 @@ class BackupController {
                 accion: "BACKUP_DOWNLOAD",
                 tabla_afectada: "SYSTEM",
                 registro_id: 0,
-                sql_ejecutado: `DOWNLOAD JSON BACKUP: ${fileName}`,
+                sql_ejecutado: `DOWNLOAD BACKUP: ${fileName}`,
                 sql_rollback: 'CANNOT ROLLBACK DOWNLOAD OPERATION',
-                ip_cliente: req.ip,
+                ip_cliente: getClientIp(req),
                 fecha_evento: new Date()
             });
 
-            logger.info(`Backup JSON descargado por ${req.user.username}: ${fileName}`);
+            logger.info(`Backup descargado por ${req.user.username}: ${fileName}\ndesde IP: ${getClientIp(req)}`);
 
             res.download(filePath);
 
         } catch (error) {
-            logger.error(`Error en descarga de backup JSON: ${error.message}`);
+            logger.error(`Error en descarga de backup: ${error.message}`);
             res.status(500).json({ 
                 success: false, 
                 message: "Error en el servidor" 
@@ -233,7 +230,10 @@ class BackupController {
     // ==================================================
     async createSqlBackup(req, res) {
         try {
+            const start = Date.now();
             const result = await BackupSqlService.createSqlBackup();
+            const end = Date.now();
+            const seconds = ((end - start) / 1000).toFixed(2);
             
             // Auditoría
             await auditService.createLog({
@@ -243,12 +243,12 @@ class BackupController {
                 registro_id: 0,
                 sql_ejecutado: `SQL BACKUP: ${result.file}`,
                 sql_rollback: `CANNOT ROLLBACK FILE CREATION`,
-                ip_cliente: req.ip,
+                ip_cliente: getClientIp(req),
                 fecha_evento: new Date()
             });
 
-            logger.info(`Backup SQL creado por ${req.user.username}: ${result.file}`);
-            
+            logger.info(`Backup SQL creado por ${req.user.username}: ${result.file}\ndesde IP: ${getClientIp(req)} en ${seconds}s`);
+
             res.json({
                 success: true,
                 message: "Backup SQL generado correctamente",
@@ -304,7 +304,7 @@ class BackupController {
                 return total;
             };
 
-            logger.info(`Backup JSON visualizado por ${req.user.username}: ${fileName}`);
+            logger.info(`Backup JSON visualizado por ${req.user.username}: ${fileName}\n desde IP: ${getClientIp(req)}`);
 
             res.json({
                 success: true,
@@ -342,6 +342,21 @@ function getLocalTimestamp() {
     const time = now.toLocaleTimeString('es-ES').replace(/:/g, '-');
     
     return `${date}_${time}`;
+}
+
+function getClientIp(req) {
+    let ip = req.headers['x-forwarded-for']?.split(',')[0] ||
+             req.connection?.remoteAddress ||
+             req.socket?.remoteAddress ||
+             req.ip;
+
+    // Normalizar IPv6 localhost
+    if (ip === '::1') return '127.0.0.1';
+
+    // Si es formato IPv6 con IPv4 incrustrado (ej ::ffff:192.168.1.10)
+    if (ip.startsWith("::ffff:")) return ip.replace("::ffff:", "");
+
+    return ip;
 }
 
 module.exports = new BackupController();

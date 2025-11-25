@@ -1,0 +1,174 @@
+<div class="insights-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">📊 Dashboard de Insights</h1>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="startDate">Fecha Inicio:</label>
+        <input 
+          type="date" 
+          id="startDate" 
+          [(ngModel)]="startDate" 
+          (change)="onDateChange()"
+          class="date-input"
+        />
+      </div>
+      <div class="filter-group">
+        <label for="endDate">Fecha Fin:</label>
+        <input 
+          type="date" 
+          id="endDate" 
+          [(ngModel)]="endDate" 
+          (change)="onDateChange()"
+          class="date-input"
+        />
+      </div>
+      <button class="btn-export" (click)="exportData()" [disabled]="!dashboardData">
+        📥 Exportar
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    ❌ {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && dashboardData" class="dashboard-content">
+    
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card revenue">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Ingresos Totales</p>
+          <p class="kpi-value">{{ formatCurrency(totalRevenue) }}</p>
+        </div>
+      </div>
+
+      <div class="kpi-card services">
+        <div class="kpi-icon">🚗</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Total Servicios</p>
+          <p class="kpi-value">{{ totalServices }}</p>
+        </div>
+      </div>
+
+      <div class="kpi-card ticket">
+        <div class="kpi-icon">🎫</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Ticket Promedio</p>
+          <p class="kpi-value">{{ formatCurrency(avgTicket) }}</p>
+        </div>
+      </div>
+
+      <div class="kpi-card duration">
+        <div class="kpi-icon">⏱️</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Duración Promedio</p>
+          <p class="kpi-value">{{ formatDuration(avgDuration) }}</p>
+        </div>
+      </div>
+
+      <div class="kpi-card vehicles">
+        <div class="kpi-icon">🔢</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Vehículos Únicos</p>
+          <p class="kpi-value">{{ uniqueVehicles }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ocupación Actual -->
+    <h2 class="section-title">Ocupación en Tiempo Real</h2>
+    <div class="occupancy-grid">
+      <div *ngFor="let item of dashboardData.currentOccupancy" class="occupancy-card">
+        <div class="occupancy-header">
+          <h3>{{ item.tipo_descripcion }}</h3>
+          <span class="occupancy-percentage">{{ item.porcentaje_ocupacion }}%</span>
+        </div>
+        <div class="occupancy-bar">
+          <div 
+            class="occupancy-fill" 
+            [ngClass]="getOccupancyColor(item.porcentaje_ocupacion)"
+            [style.width.%]="item.porcentaje_ocupacion"
+          ></div>
+        </div>
+        <div class="occupancy-details">
+          <span>{{ item.espacios_ocupados }} / {{ item.capacidad_maxima }} ocupados</span>
+          <span>{{ item.espacios_disponibles }} disponibles</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-grid">
+      <!-- Distribución por tipo -->
+      <div class="chart-card">
+        <h3 class="chart-title">Distribución de Ingresos</h3>
+        <div class="chart-container">
+          <canvas #revenueByTypeCanvas></canvas>
+        </div>
+      </div>
+
+      <!-- Tendencia diaria -->
+      <div class="chart-card chart-large">
+        <h3 class="chart-title">Tendencia de Ingresos Diarios</h3>
+        <div class="chart-container">
+          <canvas #dailyRevenueCanvas></canvas>
+        </div>
+      </div>
+
+      <!-- Horas pico -->
+      <div class="chart-card">
+        <h3 class="chart-title">Horas Pico de Actividad</h3>
+        <div class="chart-container">
+          <canvas #peakHoursCanvas></canvas>
+        </div>
+      </div>
+
+      <!-- Patrón semanal -->
+      <div class="chart-card">
+        <h3 class="chart-title">Análisis por Día de la Semana</h3>
+        <div class="chart-container">
+          <canvas #weeklyPatternCanvas></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de clientes frecuentes -->
+    <h2 class="section-title">Top 10 Clientes Frecuentes</h2>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Tipo Vehículo</th>
+            <th>Visitas</th>
+            <th>Gasto Total</th>
+            <th>Gasto Promedio</th>
+            <th>Última Visita</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of dashboardData.frequentCustomers?.slice(0, 10)">
+            <td><span class="badge">{{ customer.placa }}</span></td>
+            <td>{{ customer.tipo_vehiculo }}</td>
+            <td>{{ customer.numero_visitas }}</td>
+            <td>{{ formatCurrency(customer.gasto_total) }}</td>
+            <td>{{ formatCurrency(customer.gasto_promedio_visita) }}</td>
+            <td>{{ customer.ultima_visita | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

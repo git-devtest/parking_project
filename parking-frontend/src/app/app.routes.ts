@@ -5,6 +5,7 @@ import { UsersComponent } from './components/dashboard/users/users';
 import { AuditTrailComponent } from './components/dashboard/audit-trail/audit-trail';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { InsightsDashboardComponent } from './components/dashboard/insights-dashboard/insights-dashboard.component';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -21,6 +22,12 @@ export const routes: Routes = [
   {
     path: 'auditoria',
     component: AuditTrailComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+  {
+    path: 'insights',
+    component: InsightsDashboardComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ADMIN'] }
   }

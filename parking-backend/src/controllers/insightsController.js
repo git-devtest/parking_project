@@ -1,0 +1,89 @@
+// controllers/insightsController.js
+const db = require('../config/database');
+
+class InsightsController {
+  
+  // Dashboard completo
+  async getDashboard(req, res) {
+    try {
+      const { startDate, endDate } = req.query;
+      
+      // Validación de fechas
+      const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString().split('T')[0];
+      const end = endDate || new Date().toISOString().split('T')[0];
+
+      const [results] = await db.query(
+        'CALL GetInsightsDashboard(?, ?)',
+        [start, end]
+      );
+
+      // Los resultados vienen en arrays separados
+      const dashboard = {
+        executiveSummary: results[0][0],
+        revenueByVehicleType: results[1],
+        dailyRevenueTrend: results[2],
+        peakHours: results[3],
+        currentOccupancy: results[4],
+        frequentCustomers: results[5],
+        weeklyPattern: results[6],
+        rotationRate: results[7],
+        periodComparison: results[8],
+        dateRange: { startDate: start, endDate: end }
+      };
+
+      res.json(dashboard);
+    } catch (error) {
+      console.error('Error getting dashboard:', error);
+      res.status(500).json({ error: 'Error al obtener dashboard' });
+    }
+  }
+
+  // Endpoint individual para ocupación en tiempo real
+  async getCurrentOccupancy(req, res) {
+    try {
+      const query = `
+        SELECT 
+          pc.vehicleType,
+          vt.description as tipo_descripcion,
+          pc.maxCapacity,
+          pc.currentCount,
+          (pc.maxCapacity - pc.currentCount) as availableSpaces,
+          ROUND((pc.currentCount * 100.0 / pc.maxCapacity), 2) as occupancyPercentage
+        FROM parkingcapacity pc
+        JOIN vehicletype vt ON pc.vehicleType = vt.type_name
+      `;
+      
+      const [results] = await db.query(query);
+      res.json(results);
+    } catch (error) {
+      console.error('Error getting occupancy:', error);
+      res.status(500).json({ error: 'Error al obtener ocupación' });
+    }
+  }
+
+  // Vehículos actualmente estacionados
+  async getCurrentlyParked(req, res) {
+    try {
+      const query = `
+        SELECT 
+          plateNumber,
+          vehicleType,
+          entryTime,
+          minutes_parked,
+          vehicle_type_description,
+          ROUND(minutes_parked / 60.0, 2) as hours_parked
+        FROM currentparkedvehicles
+        ORDER BY entryTime DESC
+      `;
+      
+      const [results] = await db.query(query);
+      res.json(results);
+    } catch (error) {
+      console.error('Error getting parked vehicles:', error);
+      res.status(500).json({ error: 'Error al obtener vehículos estacionados' });
+    }
+  }
+}
+
+module.exports = new InsightsController();

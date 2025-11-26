@@ -13,22 +13,8 @@
 
 .table-container {
   overflow-x: auto;
-}
-
-.audit-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.audit-table th, .audit-table td {
-  padding: .75rem;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: .9rem;
-}
-
-.audit-table th {
-  background: #f9fafb;
-  text-align: center;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
 }
 
 .loading-text, .empty-text {
@@ -89,13 +75,6 @@
 .audit-table thead {
   background: #f3f4f6;
   border-bottom: 2px solid #e5e7eb;
-}
-
-.audit-table th {
-  padding: 12px 10px;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
 }
 
 .audit-table td {
@@ -290,4 +269,45 @@
 
 .sql-identifier {
   color: #6b7280; /* gris neutro */
+}
+
+/* Form Cards */
+.form-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+.form-card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--foreground);
+}
+
+.form-card-description {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
 }

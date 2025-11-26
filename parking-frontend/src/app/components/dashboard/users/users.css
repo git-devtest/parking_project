@@ -26,6 +26,8 @@
 
 .table-container {
   overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
 }
 
 .users-table {
@@ -38,15 +40,15 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.users-table th {
-  background: #f4f4f4;
-  padding: 10px;
-  text-align: left;
+.users-table thead {
+  background: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .users-table td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 10px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
 }
 
 .users-table th, .users-table td {
@@ -204,3 +206,44 @@
 .btn-cancel:hover { background: #e0e6ea; }
 .btn-delete { background: #e02424; color: #fff; }
 .btn-delete:hover { background: #a51818; }
+
+/* Form Cards */
+.form-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+.form-card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--foreground);
+}
+
+.form-card-description {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}

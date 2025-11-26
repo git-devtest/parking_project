@@ -257,16 +257,16 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // Cargar vehículos estacionados
   loadParkedVehicles(): void {
-  this.apiService.getParkedVehicles().subscribe({
-    next: (response: any) => {
-      if (response.success) {
-        this.parkedVehicles = response.data || [];
-        this.filterParkedVehicles();
-      }
-    },
-    error: err => { alert(err.message); }
-  });
-}
+    this.apiService.getParkedVehicles().subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.parkedVehicles = response.data || [];
+          this.filterParkedVehicles();
+        }
+      },
+      error: err => { alert(err.message); }
+    });
+  }
 
   // Filtrar vehículos por placa
   onSearchPlate(): void {

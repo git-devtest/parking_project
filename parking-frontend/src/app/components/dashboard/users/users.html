@@ -1,149 +1,112 @@
-<h2 class="section-title">Administración de Usuarios</h2>
-
-    <!-- Controles superiores -->
-    <div class="top-controls">
-        <button class="btn-small edit" (click)="openCreateModal()">
-        + Crear Usuario
-        </button>
-
-        <div class="search-box">
-        <input
-            type="text"
-            placeholder="Buscar usuario..."
-            [(ngModel)]="searchTerm"
-            (input)="applyFilter()"
-        />
+<div class="tab-content">
+    <form class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-title">Administración de Usuarios</div>
+            <div class="form-card-description">Gestión de usuarios del sistema</div>
         </div>
-    </div>
+    
+        <div class="form-card-content">
+            <!-- Controles superiores -->
+            <div class="top-controls">
+                <button class="btn-small edit" (click)="openCreateModal()"> + Crear Usuario </button>
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar usuario..." [(ngModel)]="searchTerm" (input)="applyFilter()"/>
+                </div>
+            </div>
 
-    <div class="card">
-        <div class="table-container">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <!--<th>ID Registro</th> -->
-                        <th>Usuario</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>Activo</th>
-                        <th>Creado</th>
-                        <th class="actions-col">Acciones</th>
-                    </tr>
-                </thead>
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <!--<th>ID Registro</th> -->
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Activo</th>
+                            <th>Creado</th>
+                            <th class="actions-col">Acciones</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <tr *ngFor="let u of users">
-                        <td>{{ u.username }}</td>
-                        <td>{{ u.email }}</td>
-                        <td>
-                            <span class="badge role-admin" *ngIf="u.role === 'ADMIN'">ADMIN</span>
-                            <span class="badge role-operator" *ngIf="u.role === 'OPERATOR'">OPERATOR</span>
-                        </td>
-                        <td>
-                            <span class="badge active" *ngIf="u.isActive">Activo</span>
-                            <span class="badge inactive" *ngIf="!u.isActive">Inactivo</span>
-                        </td>
-                        <td>{{ u.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
-                        <td class="actions">
-                            <button class="btn-small edit" (click)="openEditModal(u)">Editar</button>
-                            <button class="btn-small delete" (click)="openDeleteModal(u)">Eliminar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> 
-        
+                    <tbody>
+                        <tr *ngFor="let u of users">
+                            <td>{{ u.username }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                <span class="badge role-admin" *ngIf="u.role === 'ADMIN'">ADMIN</span>
+                                <span class="badge role-operator" *ngIf="u.role === 'OPERATOR'">OPERATOR</span>
+                            </td>
+                            <td>
+                                <span class="badge active" *ngIf="u.isActive">Activo</span>
+                                <span class="badge inactive" *ngIf="!u.isActive">Inactivo</span>
+                            </td>
+                            <td>{{ u.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+                            <td class="actions">
+                                <button class="btn-small edit" (click)="openEditModal(u)">Editar</button>
+                                <button class="btn-small delete" (click)="openDeleteModal(u)">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Paginación -->
         <div class="pagination-controls">
             <button class="pagintation-btn" [disabled]="currentPage === 1">Anterior</button>
-
             <span>Página {{ currentPage }} de {{ totalPages }}</span>
-
             <button class="pagintation-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
         </div>
-    </div>
 
-    <!-- ================= MODAL CREAR / EDITAR ================ -->
-<div class="modal-backdrop" *ngIf="showFormModal">
-    <div class="modal-window user-modal">
-        <h3>{{ editMode ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
-
-        <form (ngSubmit)="saveUser()">
-
-            <!-- Username -->
-            <label for="username" class="modal-label">Usuario</label>
-            <input id="username" class="modal-input"
-                type="text" [(ngModel)]="form.username"
-                name="username" placeholder="Nombre de usuario" required />
-
-            <!-- Email -->
-            <label for="email" class="modal-label">Email</label>
-            <input id="email" class="modal-input"
-                type="email" [(ngModel)]="form.email"
-                name="email" placeholder="correo@ejemplo.com" required />
-
-            <!-- Rol -->
-            <label for="role" class="modal-label">Rol</label>
-            <select id="role" class="modal-input"
-                [(ngModel)]="form.role" name="role" required>
-                <option value="ADMIN">Administrador</option>
-                <option value="OPERATOR">Operador</option>
-            </select>
-
-            <!-- Password -->
-            <label for="password" class="modal-label" *ngIf="!editMode">Contraseña</label>
-            <input id="password" class="modal-input"
-                *ngIf="!editMode" type="password"
-                [(ngModel)]="form.password" name="password"
-                placeholder="Contraseña" required />
-
-            <label for="password" class="modal-label" *ngIf="editMode">Nueva Contraseña (opcional)</label>
-            <input id="password" class="modal-input"
-                *ngIf="editMode" type="password"
-                [(ngModel)]="form.password" name="password"
-                placeholder="Dejar vacío para no cambiar" />
-
-            <!-- Estado (solo editar) -->
-            <div *ngIf="editMode" style="margin-top:10px;">
-                <label for="isActive" class="modal-label">Estado</label>
-                <select id="isActive" class="modal-input"
-                    [(ngModel)]="form.isActive" name="isActive">
-                    <option [value]="1">Activo</option>
-                    <option [value]="0">Inactivo</option>
-                </select>
+        <!-- ================= MODAL CREAR / EDITAR ================ -->
+        <div class="modal-backdrop" *ngIf="showFormModal">
+            <div class="modal-window user-modal">
+                <h3>{{ editMode ? 'Editar Usuario' : 'Crear Usuario' }}</h3>
+                <form (ngSubmit)="saveUser()">
+                    <!-- Username -->
+                    <label for="username" class="modal-label">Usuario</label>
+                    <input id="username" class="modal-input" type="text" [(ngModel)]="form.username" name="username" placeholder="Nombre de usuario" required />
+                    <!-- Email -->
+                    <label for="email" class="modal-label">Email</label>
+                    <input id="email" class="modal-input" type="email" [(ngModel)]="form.email" name="email" placeholder="correo@ejemplo.com" required />
+                    <!-- Rol -->
+                    <label for="role" class="modal-label">Rol</label>
+                    <select id="role" class="modal-input" [(ngModel)]="form.role" name="role" required>
+                        <option value="ADMIN">Administrador</option>
+                        <option value="OPERATOR">Operador</option>
+                    </select>
+                    <!-- Password -->
+                    <label for="password" class="modal-label" *ngIf="!editMode">Contraseña</label>
+                    <input id="password" class="modal-input" *ngIf="!editMode" type="password" [(ngModel)]="form.password" name="password" placeholder="Contraseña" required />
+                    <label for="password" class="modal-label" *ngIf="editMode">Nueva Contraseña (opcional)</label>
+                    <input id="password" class="modal-input" *ngIf="editMode" type="password" [(ngModel)]="form.password" name="password" placeholder="Dejar vacío para no cambiar" />
+                    <!-- Estado (solo editar) -->
+                    <div *ngIf="editMode" style="margin-top:10px;">
+                        <label for="isActive" class="modal-label">Estado</label>
+                        <select id="isActive" class="modal-input" [(ngModel)]="form.isActive" name="isActive">
+                            <option [value]="1">Activo</option>
+                            <option [value]="0">Inactivo</option>
+                        </select>
+                    </div>
+                    <!-- Botones -->
+                    <div class="modal-actions" style="margin-top:18px;">
+                        <button class="btn btn-save" type="submit">{{ editMode ? 'Actualizar' : 'Crear' }}</button>
+                        <button class="btn btn-cancel" type="button" (click)="closeModals()">Cancelar</button>
+                    </div>
+                </form>
             </div>
-
-            <!-- Botones -->
-            <div class="modal-actions" style="margin-top:18px;">
-                <button class="btn btn-save" type="submit">
-                    {{ editMode ? 'Actualizar' : 'Crear' }}
-                </button>
-                <button class="btn btn-cancel" type="button" (click)="closeModals()">Cancelar</button>
-            </div>
-
-        </form>
-    </div>
-</div>
-
-
-<!-- ================= MODAL ELIMINAR ================ -->
-<div class="modal-backdrop" *ngIf="showDeleteModal">
-    <div class="modal-window">
-        <h3>Eliminar Usuario</h3>
-
-        <p>
-            ¿Seguro que deseas eliminar
-            <strong>{{ selectedUser?.username }}</strong>?
-        </p>
-
-        <div class="modal-actions">
-            <button class="btn btn-delete" (click)="confirmDelete()">Eliminar</button>
-            <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
         </div>
-    </div>
+
+        <!-- ================= MODAL ELIMINAR ================ -->
+        <div class="modal-backdrop" *ngIf="showDeleteModal">
+            <div class="modal-window">
+                <h3>Eliminar Usuario</h3>
+                <p>¿Seguro que deseas eliminar <strong>{{ selectedUser?.username }}</strong>?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-delete" (click)="confirmDelete()">Eliminar</button>
+                    <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
-
-
-  
-
-  

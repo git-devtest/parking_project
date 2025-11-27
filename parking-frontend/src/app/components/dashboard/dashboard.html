@@ -232,7 +232,7 @@
                   <td>${{ calculateCurrentCost(vehicle.entryTime, vehicle.vehicleType) | number:'1.2-2' }}</td>
                   <td class="actions-cell">
                     <button class="action-button exit" 
-                            (click)="registerVehicleExit(vehicle.plateNumber)"
+                            (click)="exitVehicle(vehicle)"
                             [disabled]="isProcessingExit === vehicle.plateNumber">
                       {{ isProcessingExit === vehicle.plateNumber ? 'Procesando...' : 'Registrar Salida' }}
                     </button>
@@ -559,7 +559,13 @@
       <app-backups></app-backups>
     </div>
 
-    
+    <!-- Modal de Ticket de Salida -->
+    <app-parking-ticket
+      *ngIf="showTicketModal && currentTicketData"
+      [ticketData]="currentTicketData"
+      (onClose)="closeTicketModal()"
+      (onPrint)="handleTicketPrint()">
+    </app-parking-ticket>
   </div>
 
   <!-- Refresh Button 

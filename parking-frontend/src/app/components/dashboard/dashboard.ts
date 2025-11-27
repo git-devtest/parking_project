@@ -8,6 +8,7 @@ import { AuditTrailComponent } from './audit-trail/audit-trail';
 import { UsersService } from '../../services/users.service';
 import { UsersComponent } from './users/users';
 import { BackupsComponent } from './backups/backups';
+import { ParkingTicketComponent, TicketData } from '../parking-ticket/parking-ticket';
 
 interface DashboardStats {
   parkedVehicles: number;
@@ -24,7 +25,8 @@ interface DashboardStats {
     FormsModule, 
     AuditTrailComponent, 
     UsersComponent,
-    BackupsComponent],
+    BackupsComponent,
+    ParkingTicketComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -84,6 +86,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
   role: string = '';
 
+  // Variables para el ticket
+  showTicketModal = false;
+  currentTicketData: TicketData | null = null;
+
   constructor(
     private authService: AuthService,
     private apiService: ApiService,
@@ -108,9 +114,9 @@ export class Dashboard implements OnInit, OnDestroy {
     this.endDate = this.maxDate;
     
     // Actualizar datos cada 60 segundos
-    /*this.refreshInterval = setInterval(() => {
+    this.refreshInterval = setInterval(() => {
       this.loadDashboardData();
-    }, 60000);*/
+    }, 120000);
 
     // Cargar información de la base de datos
     this.appInfoService.getDatabaseInfo().subscribe({
@@ -572,4 +578,61 @@ export class Dashboard implements OnInit, OnDestroy {
     // Para cualquier otro caso, intentar formatear
     return this.formatReportDate(isoString);
   }
+
+  // Método para procesar la salida del vehículo
+  exitVehicle(vehicle: any) {
+    // Mostrar confirmación (opcional)
+    if (!confirm(`¿Confirmar salida del vehículo ${vehicle.plateNumber}?`)) {
+      return;
+    }
+
+    this.apiService.exitVehicle(vehicle.plateNumber).subscribe({
+      next: (response) => {
+        if (response.success && response.data.ticket) {
+          // Mostrar ticket inmediatamente
+          this.currentTicketData = response.data.ticket;
+          this.showTicketModal = true;
+          
+          // Mostrar mensaje de éxito
+          this.showAlert(response.message || 'Salida registrada exitosamente', 'success');
+        }
+      },
+      error: (error) => {
+        const errorMsg = error.error?.message || 'Error al procesar salida';
+        this.showAlert(errorMsg, 'error');
+        console.error('Error en salida:', error);
+      }
+    });
+  }
+
+  // Cerrar el modal del ticket
+  closeTicketModal() {
+    this.showTicketModal = false;
+    this.currentTicketData = null;
+    
+    // Recargar estadísticas después de cerrar el ticket
+    this.loadDashboardData();
+    this.loadParkedVehicles();
+  }
+
+  // Manejar la impresión del ticket
+  handleTicketPrint() {
+    // Después de imprimir, cerrar el modal automáticamente
+    setTimeout(() => {
+      this.closeTicketModal();
+    }, 500);
+  }
+
+  showAlert(message: string, type: string) {
+    this.alertMessage = message;
+    this.alertType = type;
+    setTimeout(() => {
+      this.alertMessage = '';
+      this.alertType = '';
+    }, 3000);
+  }
+
+  alertMessage: string = '';
+  alertType: string = '';
+  
 }

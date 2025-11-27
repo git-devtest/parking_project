@@ -142,4 +142,8 @@ export class ApiService {
       { headers: this.getHeaders() }*/
     );
   }
+
+  exitVehicle(plateNumber: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/vehicles/exit`, { plateNumber });
+  }
 }

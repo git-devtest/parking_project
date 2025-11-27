@@ -1,0 +1,342 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.ticket-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ticket-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.ticket-content {
+  padding: 2rem;
+}
+
+.ticket-title {
+  text-align: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px dashed #d1d5db;
+  margin-bottom: 1.5rem;
+}
+
+.ticket-logo {
+  width: 64px;
+  height: 64px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.ticket-logo svg {
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+.ticket-title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+.ticket-title p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.ticket-id {
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.ticket-id span {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: #4b5563;
+  word-break: break-all;
+}
+
+.ticket-info {
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-row .label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.info-row .value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.info-row .value.plate {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.info-row .value.time {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.ticket-total {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.total-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.total-amount {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.ticket-footer {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 2px dashed #d1d5db;
+}
+
+.footer-date {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0.25rem 0;
+}
+
+.footer-reprint {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.ticket-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-radius: 0 0 12px 12px;
+}
+
+.btn-print,
+.btn-close {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-print {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-print:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-close {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.btn-close:hover {
+  background-color: #d1d5db;
+}
+
+/* Estilos de impresión */
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  .modal-backdrop {
+    position: static;
+    background: white;
+  }
+
+  .ticket-modal {
+    box-shadow: none;
+    max-width: 100%;
+  }
+
+  @page {
+    margin: 1cm;
+    size: A5;
+  }
+}
+
+/* ... tus estilos existentes ... */
+
+/* ========================================
+   ESTILOS DE IMPRESIÓN - CRÍTICOS
+   ======================================== */
+
+@media print {
+  /* Ocultar TODO excepto el ticket */
+  body * {
+    visibility: hidden !important;
+  }
+  
+  /* Hacer visible solo el modal y su contenido */
+  .modal-backdrop,
+  .modal-backdrop * {
+    visibility: visible !important;
+  }
+  
+  /* Ocultar elementos que no se deben imprimir */
+  .print-hidden,
+  .ticket-header,
+  .ticket-actions {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Resetear el modal para impresión */
+  .modal-backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    background: white !important;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .ticket-modal {
+    box-shadow: none;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .ticket-content {
+    padding: 1.5rem;
+  }
+  
+  /* Preservar colores en la impresión */
+  .ticket-logo {
+    background-color: #2563eb !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .ticket-logo svg {
+    color: white !important;
+  }
+  
+  .ticket-total {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .ticket-id {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Configuración de página */
+  @page {
+    size: A5 portrait;
+    margin: 1cm;
+  }
+  
+  /* Evitar saltos de página dentro del ticket */
+  .ticket-content {
+    page-break-inside: avoid;
+  }
+}

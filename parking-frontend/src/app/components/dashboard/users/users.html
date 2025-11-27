@@ -1,5 +1,5 @@
 <div class="tab-content">
-    <form class="form-card">
+    <div class="form-card">
         <div class="form-card-header">
             <div class="form-card-title">Administración de Usuarios</div>
             <div class="form-card-description">Gestión de usuarios del sistema</div>
@@ -29,7 +29,7 @@
                     </thead>
 
                     <tbody>
-                        <tr *ngFor="let u of users">
+                        <tr *ngFor="let u of paginatedUsers">
                             <td>{{ u.username }}</td>
                             <td>{{ u.email }}</td>
                             <td>
@@ -108,5 +108,5 @@
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>

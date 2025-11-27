@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersService } from '../../../services/users.service';
 import { FormsModule } from '@angular/forms';
+import { User } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-users',
@@ -13,13 +14,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class UsersComponent implements OnInit {
 
-  users: any[] = [];
-  paginatedUsers: any[] = [];
+  users: User[] = [];
+  paginatedUsers: User[] = [];
 
-  searchTerm = '';
-  currentPage = 1;
-  itemsPerPage = 10;
-  totalPages = 1;
+  searchTerm: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 0;
 
   showFormModal = false;
   showDeleteModal = false;
@@ -51,12 +52,14 @@ export class UsersComponent implements OnInit {
         u.email.toLowerCase().includes(term)
       );
     }
+    
+    // Simplificado SIN paginación para probar
+    this.paginatedUsers = filtered;
+  }
 
-    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
-    this.paginatedUsers = filtered.slice(
-      (this.currentPage - 1) * this.itemsPerPage,
-      this.currentPage * this.itemsPerPage
-    );
+  onSearchChange(event: any) {
+    this.searchTerm = event.target.value;
+    this.applyFilter();
   }
 
   nextPage() {

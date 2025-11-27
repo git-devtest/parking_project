@@ -494,12 +494,20 @@ export class Dashboard implements OnInit, OnDestroy {
     this.reportData = data;
     
     // Calcular totales
-    this.totalIncome = data.reduce((sum, item) => sum + (item.total_income || 0), 0);
+    this.totalIncome = data.reduce((sum, item) => { 
+    const income = parseFloat(item.total_income) || 0;
+    return sum + income;
+  }, 0);
     this.totalVehicles = data.reduce((sum, item) => sum + (item.vehicles_served || 0), 0);
     
     // Calcular duración promedio
-    const totalDuration = data.reduce((sum, item) => sum + (item.avg_duration_minutes || 0), 0);
-    const avgMinutes = data.length > 0 ? totalDuration / data.length : 0;
+    // ✅ Duración promedio ponderada correcta
+    const totalDurationMinutes = data.reduce((sum, item) => {
+      const vehiclesServed = parseInt(item.vehicles_served) || 0;
+      const avgDuration = parseFloat(item.avg_duration_minutes) || 0;
+      return sum + (vehiclesServed * avgDuration);
+    }, 0);
+    const avgMinutes = data.length > 0 ? totalDurationMinutes / data.length : 0;
     this.averageDuration = this.formatDuration(avgMinutes);
     
     // Usar datos del summary si están disponibles

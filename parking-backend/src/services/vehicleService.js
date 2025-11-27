@@ -1,5 +1,6 @@
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
+const ticketService = require('./ticketService');
 
 class VehicleService {
   async registerEntry(plateNumber, vehicleType, user) {
@@ -41,13 +42,27 @@ class VehicleService {
         [plateNumber, user]
       );
 
+      const exitData = result[0][0];
+
+      if (!exitData || !exitData.vehicleId) {
+        throw new Error(exitData?.message || 'Error al registrar salida');
+      }
+
       await connection.commit();
 
       logger.info(`Salida registrada: ${plateNumber},\nUsuario registra salida: ${user}`);
+
+      // Generar ticket (fuera de la transacción)
+      const ticketResult = await ticketService.generateExitTicket(plateNumber);
+
+      // Retornar ambos resultados
       return {
         success: true,
-        message: 'Salida registrada exitosamente',
-        data: result[0][0]
+        message: exitData.message || 'Salida registrada exitosamente',
+        data: {
+          exit: exitData,
+          ticket: ticketResult.data
+        }
       };
     } catch (error) {
       await connection.rollback();

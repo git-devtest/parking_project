@@ -16,6 +16,7 @@ const auditRoutes = require('./routes/auditRoutes');
 const userRoutes = require('./routes/userRoutes');
 const backupRoutes = require('./routes/backupRoutes');
 const insightsRoutes = require('./routes/insightsRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/audit', auditRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/backups', backupRoutes);
 app.use('/api/insights', insightsRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 // Error handling
 app.use(notFound);

@@ -17,13 +17,25 @@ class VehicleController {
   async registerExit(req, res, next) {
     try {
       const { plateNumber } = req.body;
+      const user = req.user?.username;
+
+      if (!plateNumber) {
+        return res.status(400).json({
+          success: false,
+          message: 'La placa del vehículo es requerida'
+        });
+      }
       
-      const result = await vehicleService.registerExit(plateNumber, req.user.username);
+      const result = await vehicleService.registerExit(plateNumber, user);
       
       res.status(200).json(result);
     } catch (error) {
-      next(error);
-    }
+      console.error('Error en vehicleController:', error);
+      res.status(500).json({
+      success: false,
+      message: error.message || 'Error al procesar la salida del vehículo'
+    });
+  }
   }
 
   async getParkedVehicles(req, res, next) {

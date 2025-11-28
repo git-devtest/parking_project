@@ -147,6 +147,56 @@ class TicketService {
       connection.release();
     }
   }
+
+  async getLastTicketByPlate(plateNumber) {
+    const connection = await pool.getConnection();
+    try {
+      const [ticketInfo] = await connection.query(`
+        SELECT 
+          v.id as vehicleId,
+          v.plateNumber,
+          v.vehicleType,
+          vt.type_name as vehicleTypeName,
+          vt.description as vehicleTypeDescription,
+          ps.id as sessionId,
+          ps.entryTime,
+          ps.exitTime,
+          ps.duration,
+          ps.amount,
+          ps.status
+        FROM ParkingSession ps
+        INNER JOIN Vehicle v ON ps.vehicleId = v.id
+        INNER JOIN VehicleType vt ON v.vehicleType = vt.type_name
+        WHERE v.plateNumber = ? AND ps.status = 'COMPLETED'
+        ORDER BY ps.exitTime DESC
+        LIMIT 1
+      `, [plateNumber]);
+
+      if (ticketInfo.length === 0) {
+        throw new Error('No se encontró ticket para esta placa');
+      }
+
+      const session = ticketInfo[0];
+      const ticket = {
+        ticketId: uuidv4(),
+        sessionId: session.sessionId,
+        plateNumber: session.plateNumber,
+        vehicleType: session.vehicleTypeName,
+        vehicleTypeDescription: session.vehicleTypeDescription,
+        entryTime: session.entryTime,
+        exitTime: session.exitTime,
+        duration: parseInt(session.duration) || 0,
+        amount: parseFloat(session.amount) || 0,
+        generatedAt: new Date(),
+        status: session.status,
+        isReprint: true
+      };
+
+      return { success: true, data: ticket };
+    } finally {
+      connection.release();
+    }
+  }
 }
 
 module.exports = new TicketService();   

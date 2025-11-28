@@ -684,3 +684,19 @@ tfoot td {
   font-size: text-xs;
   color: text-gray-300;
 }
+
+.action-button.reprint {
+  background-color: #8b5cf6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+}
+
+.action-button.reprint:hover {
+  background-color: #7c3aed;
+}
+
+.action-button.reprint svg {
+  flex-shrink: 0;
+}

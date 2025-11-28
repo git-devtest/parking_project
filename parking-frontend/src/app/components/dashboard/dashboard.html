@@ -189,20 +189,35 @@
           <div class="form-card-description">Lista de vehículos actualmente en el parqueadero</div>
         </div>
         <div class="form-card-content">
-          <!-- Buscador 
-          <div class="form-grid" style="margin-bottom: 1.5rem;">
-            <div class="form-group">
-              <label class="form-label" for="searchPlate">Buscar por placa</label>
-              <input 
-                class="form-input" 
-                type="text" 
-                id="searchPlate" 
-                placeholder="Ej: ABC123"
-                [(ngModel)]="searchPlate"
-                (input)="onSearchPlate()"
-                maxlength="10">
+
+          <!-- ========== SECCIÓN DE REIMPRESIÓN ========== -->
+          <div class="reprint-section" style="margin-bottom: 1.5rem;">
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" for="searchPlateReprint">Reimprimir Ticket</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input 
+                  class="form-input" 
+                  type="text" 
+                  id="searchPlateReprint"
+                  placeholder="Ingrese placa..."
+                  [(ngModel)]="searchPlateForReprint"
+                  (keyup.enter)="reprintTicket()"
+                  maxlength="10"
+                  style="flex: 1; text-transform: uppercase;">
+                <button 
+                  class="action-button reprint" 
+                  (click)="reprintTicket()"
+                  style="white-space: nowrap;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                  Reimprimir
+                </button>
+              </div>
             </div>
-          </div> -->
+          </div>
 
           <!-- Tabla SOLO cuando hay datos -->
           <div *ngIf="filteredParkedVehicles.length > 0" class="table-container">

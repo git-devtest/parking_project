@@ -7,6 +7,8 @@ const ticketService = require("../services/ticketService");
 
 router.post('/parking-sessions/:id/generate-ticket', authenticateToken, ticketService.generateExitTicket);
 
-router.post('/tickets/reprint/:sessionId', authenticateToken, ticketController.reprintTicket);
+router.post('/reprint/:sessionId', authenticateToken, ticketController.reprintTicket);
+
+router.get('/last/:plateNumber', authenticateToken, ticketController.getLastTicket);
 
 module.exports = router;

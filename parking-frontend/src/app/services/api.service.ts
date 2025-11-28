@@ -146,4 +146,8 @@ export class ApiService {
   exitVehicle(plateNumber: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/vehicles/exit`, { plateNumber });
   }
+
+  getLastTicket(plateNumber: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/tickets/last/${plateNumber}`);
+  }
 }

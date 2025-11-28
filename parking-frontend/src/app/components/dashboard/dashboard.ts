@@ -634,5 +634,26 @@ export class Dashboard implements OnInit, OnDestroy {
 
   alertMessage: string = '';
   alertType: string = '';
+  searchPlateForReprint: string = '';
+
+  reprintTicket() {
+    if (!this.searchPlateForReprint?.trim()) {
+      this.showAlert('Ingrese una placa', 'error');
+      return;
+    }
+
+    this.apiService.getLastTicket(this.searchPlateForReprint.toUpperCase()).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.currentTicketData = response.data;
+          this.showTicketModal = true;
+          this.searchPlateForReprint = '';
+        }
+      },
+      error: (error) => {
+        this.showAlert(error.error?.message || 'Ticket no encontrado', 'error');
+      }
+    });
+  }
   
 }

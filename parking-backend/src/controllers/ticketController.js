@@ -17,3 +17,13 @@ exports.reprintTicket = async (req, res) => {
     });
   }
 };
+
+exports.getLastTicket = async (req, res) => {
+  try {
+    const { plateNumber } = req.params;
+    const result = await ticketService.getLastTicketByPlate(plateNumber);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

@@ -110,6 +110,13 @@
         (click)="setActiveTab('backups')">
         Copias de Seguridad
       </button>
+      <button 
+        *ngIf="role === 'ADMIN'"
+        class="tab-button" 
+        [class.active]="activeTab === 'insights'"
+        (click)="setActiveTab('insights')">
+        Insights
+      </button>
     </div>
 
     <!-- Loading State -->
@@ -572,6 +579,10 @@
 
     <div *ngIf="activeTab === 'backups' && role === 'ADMIN'">
       <app-backups></app-backups>
+    </div>
+
+    <div *ngIf="activeTab === 'insights' && role === 'ADMIN'">
+      <app-insights></app-insights>
     </div>
 
     <!-- Modal de Ticket de Salida -->

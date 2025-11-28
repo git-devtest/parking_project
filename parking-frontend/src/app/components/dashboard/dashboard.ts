@@ -9,6 +9,7 @@ import { UsersService } from '../../services/users.service';
 import { UsersComponent } from './users/users';
 import { BackupsComponent } from './backups/backups';
 import { ParkingTicketComponent, TicketData } from '../parking-ticket/parking-ticket';
+import { InsightsComponent } from './insights/insights';
 
 interface DashboardStats {
   parkedVehicles: number;
@@ -26,7 +27,8 @@ interface DashboardStats {
     AuditTrailComponent, 
     UsersComponent,
     BackupsComponent,
-    ParkingTicketComponent],
+    ParkingTicketComponent,
+    InsightsComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

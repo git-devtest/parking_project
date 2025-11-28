@@ -1,0 +1,210 @@
+<!-- src/app/components/insights/insights.html -->
+
+<div class="insights-container">
+  <!-- Header con título y filtros -->
+  <div class="insights-header">
+    <div class="header-content">
+      <h1 class="page-title">📊 Insights & Analytics</h1>
+      <p class="page-subtitle">Panel de control y análisis de datos en tiempo real</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="filter-group">
+        <label for="startDate">Desde:</label>
+        <input 
+          type="date" 
+          id="startDate" 
+          [(ngModel)]="filters.startDate"
+          class="date-input"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="endDate">Hasta:</label>
+        <input 
+          type="date" 
+          id="endDate" 
+          [(ngModel)]="filters.endDate"
+          class="date-input"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="vehicleType">Tipo de Vehículo:</label>
+        <select 
+          id="vehicleType" 
+          [(ngModel)]="filters.vehicleType"
+          class="select-input"
+        >
+          <option [value]="null">Todos</option>
+          <option *ngFor="let type of vehicleTypes" [value]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary" (click)="applyFilters()" [disabled]="isLoading">
+          🔍 Aplicar
+        </button>
+        <button class="btn btn-secondary" (click)="resetFilters()" [disabled]="isLoading">
+          🔄 Resetear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <div class="error-card">
+      <span class="error-icon">⚠️</span>
+      <h3>Error al cargar datos</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-primary" (click)="applyFilters()">
+        Reintentar
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="dashboardData && !isLoading" class="dashboard-content">
+    
+    <!-- KPIs Grid -->
+    <div class="kpis-grid">
+      <!-- Ingresos Totales -->
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Ingresos Totales</p>
+          <h2 class="kpi-value">{{ formatCurrency(dashboardData.executiveSummary.ingresos_totales) }}</h2>
+          <p class="kpi-subtitle">{{ formatNumber(dashboardData.executiveSummary.total_servicios) }} servicios</p>
+        </div>
+      </div>
+
+      <!-- Ticket Promedio -->
+      <div class="kpi-card">
+        <div class="kpi-icon">🎫</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Ticket Promedio</p>
+          <h2 class="kpi-value">{{ formatCurrency(dashboardData.executiveSummary.ticket_promedio) }}</h2>
+          <p class="kpi-subtitle">Por servicio</p>
+        </div>
+      </div>
+
+      <!-- Vehículos Únicos -->
+      <div class="kpi-card">
+        <div class="kpi-icon">🚗</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Vehículos Únicos</p>
+          <h2 class="kpi-value">{{ formatNumber(dashboardData.executiveSummary.vehiculos_unicos) }}</h2>
+          <p class="kpi-subtitle">{{ formatNumber(dashboardData.executiveSummary.dias_operativos) }} días operativos</p>
+        </div>
+      </div>
+
+      <!-- Duración Promedio -->
+      <div class="kpi-card">
+        <div class="kpi-icon">⏱️</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Duración Promedio</p>
+          <h2 class="kpi-value">{{ formatDecimal(dashboardData.executiveSummary.duracion_promedio_min, 1) }} min</h2>
+          <p class="kpi-subtitle">Por servicio</p>
+        </div>
+      </div>
+
+      <!-- Horas Vendidas -->
+      <div class="kpi-card">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Horas Vendidas</p>
+          <h2 class="kpi-value">{{ formatDecimal(dashboardData.executiveSummary.horas_vendidas_totales, 1) }}h</h2>
+          <p class="kpi-subtitle">Total del período</p>
+        </div>
+      </div>
+
+      <!-- Ocupación Actual (Tiempo Real) -->
+      <div class="kpi-card occupancy-card">
+        <div class="kpi-icon">🅿️</div>
+        <div class="kpi-content">
+          <p class="kpi-label">Ocupación Actual</p>
+          <div class="occupancy-details">
+            <div *ngFor="let occ of currentOccupancy" class="occupancy-row">
+              <span class="occupancy-type">{{ occ.tipo_descripcion }}:</span>
+              <span class="occupancy-value">
+                {{ occ.currentCount }}/{{ occ.maxCapacity }}
+                <span class="occupancy-percentage">({{ formatPercentage(occ.occupancyPercentage) }})</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      
+      <!-- Ingresos por Tipo de Vehículo -->
+      <div class="chart-card">
+        <canvas id="revenueByVehicleChart"></canvas>
+      </div>
+
+      <!-- Tendencia Diaria -->
+      <div class="chart-card">
+        <canvas id="dailyRevenueChart"></canvas>
+      </div>
+
+      <!-- Horas Pico -->
+      <div class="chart-card">
+        <canvas id="peakHoursChart"></canvas>
+      </div>
+
+      <!-- Patrón Semanal -->
+      <div class="chart-card">
+        <canvas id="weeklyPatternChart"></canvas>
+      </div>
+
+      <!-- Tasa de Rotación -->
+      <div class="chart-card">
+        <canvas id="rotationRateChart"></canvas>
+      </div>
+
+      <!-- Top Clientes Frecuentes -->
+      <div class="chart-card table-card">
+        <h3 class="table-title">🏆 Clientes Frecuentes</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Tipo</th>
+                <th>Visitas</th>
+                <th>Gasto Total</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let customer of dashboardData.frequentCustomers.slice(0, 5)">
+                <td class="font-bold">{{ customer.placa }}</td>
+                <td>
+                  <span class="badge" [ngClass]="'badge-' + customer.tipo_vehiculo.toLowerCase()">
+                    {{ customer.tipo_vehiculo }}
+                  </span>
+                </td>
+                <td>{{ customer.numero_visitas }}</td>
+                <td>{{ formatCurrency(customer.gasto_total) }}</td>
+                <td>{{ formatCurrency(customer.gasto_promedio_visita) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

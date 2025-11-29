@@ -1,10 +1,12 @@
 // src/app/components/insights/insights.component.ts
-
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { InsightsService } from '../../../services/insights.services';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import {
   DashboardData,
   InsightsFilters,
@@ -13,7 +15,7 @@ import {
   CurrentOccupancy
 } from '../../../interfaces/insights';
 
-Chart.register(...registerables);
+Chart.register(...registerables, ChartDataLabels);
 
 @Component({
   selector: 'app-insights',
@@ -176,8 +178,20 @@ export class InsightsComponent implements OnInit, OnDestroy {
                 const value = context.parsed;
                 const total = data.reduce((sum, d) => sum + parseFloat(d.ingresos_totales), 0);
                 const percentage = ((value / total) * 100).toFixed(1);
-                return `${context.label}: $${value.toLocaleString()} (${percentage}%)`;
+                return `${context.label}: ${value.toLocaleString()} (${percentage}%)`;
               }
+            }
+          },
+          datalabels: {
+            color: '#000',
+            font: {
+              weight: 'bold',
+              size: 14
+            },
+            formatter: (value, context) => {
+              const total = data.reduce((sum, d) => sum + parseFloat(d.ingresos_totales), 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${percentage}%\n${value.toLocaleString()}`;
             }
           }
         }
@@ -225,10 +239,20 @@ export class InsightsComponent implements OnInit, OnDestroy {
           tooltip: {
             callbacks: {
               label: (context) => {
-                const value = context.parsed?.y;
-                return value != null ? `Ingresos: $${value.toLocaleString()}` : 'Ingresos: $0';
+                const value = context.parsed.y;
+                return value !== null ? `Ingresos: $${value.toLocaleString()}` : '';
               }
             }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#1f2937',
+            font: {
+              weight: 'bold',
+              size: 11
+            },
+            formatter: (value) => value ? `$${(value as number).toLocaleString()}` : ''
           }
         },
         scales: {
@@ -274,13 +298,23 @@ export class InsightsComponent implements OnInit, OnDestroy {
             text: 'Horas Pico de Ingresos',
             color: '#1f2937',
             font: { size: 16, weight: 'bold' }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#1f2937',
+            font: {
+              weight: 'bold',
+              size: 11
+            },
+            formatter: (value) => `${value.toLocaleString()}`
           }
         },
         scales: {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: (value) => `$${value}`
+              callback: (value) => `${value}`
             }
           }
         }
@@ -308,8 +342,10 @@ export class InsightsComponent implements OnInit, OnDestroy {
           borderWidth: 3,
           tension: 0.4,
           fill: true,
-          pointRadius: 5,
-          pointBackgroundColor: 'rgba(251, 146, 60, 1)'
+          pointRadius: 6,
+          pointBackgroundColor: 'rgba(251, 146, 60, 1)',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
         }]
       },
       options: {
@@ -322,13 +358,22 @@ export class InsightsComponent implements OnInit, OnDestroy {
             text: 'Patrón Semanal de Ingresos',
             color: '#1f2937',
             font: { size: 16, weight: 'bold' }
+          },
+          datalabels: {
+            align: 'top',
+            color: '#1f2937',
+            font: {
+              weight: 'bold',
+              size: 11
+            },
+            formatter: (value) => `${value.toLocaleString()}`
           }
         },
         scales: {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: (value) => `$${value}`
+              callback: (value) => `${value}`
             }
           }
         }
@@ -394,8 +439,23 @@ export class InsightsComponent implements OnInit, OnDestroy {
           tooltip: {
             callbacks: {
               label: (context) => {
-                return `${context.label}: ${context.parsed} rotaciones`;
+                const total = chartData.reduce((sum, d) => sum + d.rotaciones, 0);
+                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                return `${context.label}: ${context.parsed} rotaciones (${percentage}%)`;
               }
+            }
+          },
+          datalabels: {
+            color: '#000',
+            font: {
+              weight: 'bold',
+              size: 14
+            },
+            formatter: (value, context) => {
+              if (!value) return '';
+              const total = chartData.reduce((sum, d) => sum + d.rotaciones, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${percentage}%\n${value}`;
             }
           }
         }
@@ -435,5 +495,164 @@ export class InsightsComponent implements OnInit, OnDestroy {
 
   formatDecimal(value: string | number, decimals: number = 1): string {
     return parseFloat(value.toString()).toFixed(decimals);
+  }
+
+  async exportToPDFBySections(): Promise<void> {
+    try {
+      this.showLoadingIndicator('Generando PDF...');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
+      let currentY = 10;
+
+      // Título del reporte
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Insights & Analytics', pageWidth / 2, currentY, { align: 'center' });
+      
+      currentY += 10;
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(
+        `Período: ${this.filters.startDate} - ${this.filters.endDate}`,
+        pageWidth / 2,
+        currentY,
+        { align: 'center' }
+      );
+
+      currentY += 15;
+
+      // Capturar KPIs
+      const kpisElement = document.querySelector('.kpis-grid') as HTMLElement;
+      if (kpisElement) {
+        const kpisCanvas = await html2canvas(kpisElement, {
+          scale: 2,
+          logging: false,
+          backgroundColor: '#ffffff'
+        });
+        
+        const kpisImgHeight = (kpisCanvas.height * pageWidth) / kpisCanvas.width;
+        
+        if (currentY + kpisImgHeight > pageHeight - 10) {
+          pdf.addPage();
+          currentY = 10;
+        }
+        
+        pdf.addImage(
+          kpisCanvas.toDataURL('image/png'),
+          'PNG',
+          5,
+          currentY,
+          pageWidth - 10,
+          kpisImgHeight
+        );
+        
+        currentY += kpisImgHeight + 10;
+      }
+
+      // Capturar cada gráfico individualmente
+      const chartCards = document.querySelectorAll('.chart-card');
+      
+      for (let i = 0; i < chartCards.length; i++) {
+        const chartElement = chartCards[i] as HTMLElement;
+        
+        const chartCanvas = await html2canvas(chartElement, {
+          scale: 2,
+          logging: false,
+          backgroundColor: '#ffffff'
+        });
+        
+        const chartImgWidth = pageWidth - 10;
+        const chartImgHeight = (chartCanvas.height * chartImgWidth) / chartCanvas.width;
+        
+        // Si no cabe en la página actual, crear una nueva
+        if (currentY + chartImgHeight > pageHeight - 10) {
+          pdf.addPage();
+          currentY = 10;
+        }
+        
+        pdf.addImage(
+          chartCanvas.toDataURL('image/png'),
+          'PNG',
+          5,
+          currentY,
+          chartImgWidth,
+          chartImgHeight
+        );
+        
+        currentY += chartImgHeight + 10;
+      }
+
+      // Guardar PDF
+      pdf.save(`insights-${this.formatDate(new Date())}.pdf`);
+      this.hideLoadingIndicator();
+
+    } catch (error) {
+      console.error('Error:', error);
+      this.hideLoadingIndicator();
+      alert('Error al generar PDF');
+    }
+  }
+
+  // Métodos auxiliares
+  private showLoadingIndicator(message: string): void {
+    const loader = document.createElement('div');
+    loader.id = 'pdf-loader';
+    loader.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      ">
+        <div style="
+          background: white;
+          padding: 30px 50px;
+          border-radius: 12px;
+          text-align: center;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        ">
+          <div style="
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f4f6;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+          "></div>
+          <p style="
+            margin: 0;
+            font-size: 16px;
+            color: #1f2937;
+            font-weight: 600;
+          ">${message}</p>
+        </div>
+      </div>
+      <style>
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    `;
+    document.body.appendChild(loader);
+  }
+
+  private hideLoadingIndicator(): void {
+    const loader = document.getElementById('pdf-loader');
+    if (loader) {
+      document.body.removeChild(loader);
+    }
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 }

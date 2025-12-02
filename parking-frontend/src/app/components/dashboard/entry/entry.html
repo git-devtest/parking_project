@@ -1,0 +1,63 @@
+<div class="tab-content" [class.active]="activeTab === 'entry' && !isLoading">
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-title">Registrar Entrada de Vehículo</div>
+          <div class="form-card-description">Ingrese los datos del vehículo que está ingresando al parqueadero</div>
+        </div>
+        <div class="form-card-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="plateNumber">Placa del Vehículo</label>
+              <input 
+                class="form-input" 
+                type="text" 
+                id="plateNumber" 
+                placeholder="Ej: ABC123" 
+                maxlength="10"
+                [(ngModel)]="entryPlateNumber"
+                (input)="onPlateInput($event)"
+                [disabled]="isRegistering">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="vehicleType">Tipo de Vehículo</label>
+              <select 
+                class="form-select" 
+                id="vehicleType"
+                [(ngModel)]="entryVehicleType"
+                [disabled]="isRegistering">
+                <option value="CAR">Automóvil</option>
+                <option value="MOTORCYCLE">Motocicleta</option>
+                <option value="TRUCK">Camión</option>
+              </select>
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+              <button 
+                class="form-button" id="registerEntry"
+                (click)="registerVehicleEntry()"
+                [disabled]="isRegistering || !entryPlateNumber.trim()">
+                <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path>
+                </svg>
+                {{ isRegistering ? 'Registrando...' : 'Registrar Entrada' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Alertas -->
+      <div *ngIf="entryAlert.message" class="alert" [class.alert-success]="entryAlert.type === 'success'" [class.alert-error]="entryAlert.type === 'error'">
+        {{ entryAlert.message }}
+      </div>
+
+      <!-- Información de Tarifas 
+      <div class="tarifas-info">
+        <h3>💰 Tarifas Vigentes</h3>
+        <ul>
+          <li><strong>Automóvil:</strong> $20.00 por hora - $200.00 por día</li>
+          <li><strong>Motocicleta:</strong> $10.00 por hora - $100.00 por día</li>
+          <li><strong>Camion:</strong> $40.00 por hora - $400.00 por día</li>
+        </ul>
+      </div> -->
+    </div>

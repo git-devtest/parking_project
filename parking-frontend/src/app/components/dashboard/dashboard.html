@@ -14,6 +14,7 @@
 
   <!-- Stats Grid -->
   <div class="stats-grid">
+    <!-- Tarjeta de vehículos estacionados -->
     <div class="stat-card">
       <div class="stat-card-header">
         <div class="stat-card-title">Vehículos Estacionados</div>
@@ -27,6 +28,7 @@
       <div class="stat-card-value">{{ stats.parkedVehicles }}</div>
     </div>
 
+    <!-- Tarjeta de espacios disponibles -->
     <div class="stat-card">
       <div class="stat-card-header">
         <div class="stat-card-title">Espacios Disponibles</div>
@@ -38,6 +40,7 @@
       <div class="stat-card-value">{{ stats.availableSpaces }}</div>
     </div>
 
+    <!-- Tarjeta de vehículos hoy -->
     <div class="stat-card">
       <div class="stat-card-header">
         <div class="stat-card-title">Vehículos Hoy</div>
@@ -49,6 +52,7 @@
       <div class="stat-card-value">{{ stats.vehiclesToday }}</div>
     </div>
 
+    <!-- Tarjeta de ingresos del día -->
     <div class="stat-card">
       <div class="stat-card-header">
         <div class="stat-card-title">Ingresos del Día</div>
@@ -125,448 +129,20 @@
     </div>
 
     <!-- Tab Content -->
-    <div class="tab-content" [class.active]="activeTab === 'entry' && !isLoading">
-      <div class="form-card">
-        <div class="form-card-header">
-          <div class="form-card-title">Registrar Entrada de Vehículo</div>
-          <div class="form-card-description">Ingrese los datos del vehículo que está ingresando al parqueadero</div>
-        </div>
-        <div class="form-card-content">
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label" for="plateNumber">Placa del Vehículo</label>
-              <input 
-                class="form-input" 
-                type="text" 
-                id="plateNumber" 
-                placeholder="Ej: ABC123" 
-                maxlength="10"
-                [(ngModel)]="entryPlateNumber"
-                (input)="onPlateInput($event)"
-                [disabled]="isRegistering">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="vehicleType">Tipo de Vehículo</label>
-              <select 
-                class="form-select" 
-                id="vehicleType"
-                [(ngModel)]="entryVehicleType"
-                [disabled]="isRegistering">
-                <option value="CAR">Automóvil</option>
-                <option value="MOTORCYCLE">Motocicleta</option>
-                <option value="TRUCK">Camión</option>
-              </select>
-            </div>
-            <div class="form-group" style="justify-content: flex-end;">
-              <button 
-                class="form-button" id="registerEntry"
-                (click)="registerVehicleEntry()"
-                [disabled]="isRegistering || !entryPlateNumber.trim()">
-                <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
-                {{ isRegistering ? 'Registrando...' : 'Registrar Entrada' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Alertas -->
-      <div *ngIf="entryAlert.message" class="alert" [class.alert-success]="entryAlert.type === 'success'" [class.alert-error]="entryAlert.type === 'error'">
-        {{ entryAlert.message }}
-      </div>
-
-      <!-- Información de Tarifas 
-      <div class="tarifas-info">
-        <h3>💰 Tarifas Vigentes</h3>
-        <ul>
-          <li><strong>Automóvil:</strong> $20.00 por hora - $200.00 por día</li>
-          <li><strong>Motocicleta:</strong> $10.00 por hora - $100.00 por día</li>
-          <li><strong>Camion:</strong> $40.00 por hora - $400.00 por día</li>
-        </ul>
-      </div> -->
+    <div *ngIf="activeTab === 'entry'">
+      <app-entry (vehicleEntered)="refreshStatistics()"></app-entry>
     </div>
 
-    <div class="tab-content" [class.active]="activeTab === 'parked' && !isLoading">
-      <div class="form-card">
-        <div class="form-card-header">
-          <div class="form-card-title">Vehículos Estacionados</div>
-          <div class="form-card-description">Lista de vehículos actualmente en el parqueadero</div>
-        </div>
-        <div class="form-card-content">
-
-          <!-- ========== SECCIÓN DE REIMPRESIÓN ========== -->
-          <div class="reprint-section" style="margin-bottom: 1.5rem;">
-            <div class="form-group" style="margin: 0;">
-              <label class="form-label" for="searchPlateReprint">Reimprimir Ticket</label>
-              <div style="display: flex; gap: 0.5rem;">
-                <input 
-                  class="form-input" 
-                  type="text" 
-                  id="searchPlateReprint"
-                  placeholder="Ingrese placa..."
-                  [(ngModel)]="searchPlateForReprint"
-                  (keyup.enter)="reprintTicket()"
-                  maxlength="10"
-                  style="flex: 1; text-transform: uppercase;">
-                <button 
-                  class="action-button reprint" 
-                  (click)="reprintTicket()"
-                  style="white-space: nowrap;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
-                  </svg>
-                  Reimprimir
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tabla SOLO cuando hay datos -->
-          <div *ngIf="filteredParkedVehicles.length > 0" class="table-container">
-            <table id="parkedTable">
-              <thead>
-                <tr>
-                  <th>Placa</th>
-                  <th>Tipo</th>
-                  <th>Hora de Entrada</th>
-                  <th>Tiempo Estacionado</th>
-                  <th>Costo Actual</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="parkedTableBody">
-                <tr *ngFor="let vehicle of filteredParkedVehicles">
-                  <td>{{ vehicle.plateNumber }}</td>
-                  <td>
-                    <span class="badge" [class.badge-car]="vehicle.vehicleType === 'CAR'" 
-                          [class.badge-motorcycle]="vehicle.vehicleType === 'MOTORCYCLE'"
-                          [class.badge-truck]="vehicle.vehicleType === 'TRUCK'">
-                      {{ getVehicleTypeLabel(vehicle.vehicleType) }}
-                    </span>
-                  </td>
-                  <td>{{ formatDateTime(vehicle.entryTime) }}</td>
-                  <td>{{ calculateParkedTime(vehicle.entryTime) }}</td>
-                  <td>${{ calculateCurrentCost(vehicle.entryTime, vehicle.vehicleType) | number:'1.2-2' }}</td>
-                  <td class="actions-cell">
-                    <button class="action-button exit" 
-                            (click)="exitVehicle(vehicle)"
-                            [disabled]="isProcessingExit === vehicle.plateNumber">
-                      {{ isProcessingExit === vehicle.plateNumber ? 'Procesando...' : 'Registrar Salida' }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Estado vacío - EXACTO como tu diseño -->
-          <div *ngIf="parkedVehicles.length === 0" class="empty-state" id="emptyParked">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path>
-              <circle cx="7" cy="17" r="2"></circle>
-              <path d="M9 17h6"></path>
-              <circle cx="17" cy="17" r="2"></circle>
-            </svg>
-            <p>No hay vehículos estacionados actualmente.</p>
-          </div>
-
-          <!-- Estado de búsqueda sin resultados -->
-          <div *ngIf="parkedVehicles.length > 0 && filteredParkedVehicles.length === 0" class="empty-state">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <p>No se encontraron vehículos con la placa "{{ searchPlate }}".</p>
-          </div>
-        </div>
-      </div>
+    <div *ngIf="activeTab === 'parked'">
+      <app-parked (vehicleExited)="refreshStatistics()"></app-parked>
     </div>
 
-    <div class="tab-content" [class.active]="activeTab === 'history' && !isLoading">
-      <div class="form-card">
-        <div class="form-card-header">
-          <div class="form-card-title">Historial</div>
-          <div class="form-card-description">Registro histórico de entradas y salidas</div>
-        </div>
-        <div class="form-card-content">
-          <!-- Controles de paginación y filtros -->
-          <div class="form-grid" style="margin-bottom: 1.5rem;">
-            <div class="form-group">
-              <label class="form-label" for="itemsPerPage">Registros por página</label>
-              <select class="form-select" id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="loadVehicleHistory()">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="historySearch">Buscar por placa</label>
-              <input 
-                class="form-input" 
-                type="text" 
-                id="historySearch" 
-                placeholder="Ej: ABC123"
-                [(ngModel)]="historySearch"
-                (input)="onHistorySearch()"
-                maxlength="10">
-            </div>
-          </div>
-
-          <!-- Tabla de historial SOLO cuando hay datos -->
-          <div *ngIf="filteredVehicleHistory.length > 0" class="table-container">
-            <table id="historyTable">
-              <thead>
-                <tr>
-                  <th>Placa</th>
-                  <th>Tipo</th>
-                  <th>Entrada</th>
-                  <th>Salida</th>
-                  <th>Tiempo Total</th>
-                  <th>Costo</th>
-                </tr>
-              </thead>
-              <tbody id="historyTableBody">
-                <tr *ngFor="let record of paginatedHistory">
-                  <td>{{ record.plateNumber }}</td>
-                  <td>
-                    <span class="badge" [class.badge-car]="record.vehicleType === 'CAR'" 
-                          [class.badge-motorcycle]="record.vehicleType === 'MOTORCYCLE'"
-                          [class.badge-truck]="record.vehicleType === 'TRUCK'">
-                      {{ getVehicleTypeLabel(record.vehicleType) }}
-                    </span>
-                  </td>
-                  <td>{{ formatDateTime(record.entryTime) }}</td>
-                  <td>{{ record.exitTime ? formatDateTime(record.exitTime) : '--' }}</td>
-                  <td>{{ record.duration ? formatDuration(record.duration) : '--' }}</td>
-                  <td>{{ record.amount ? '$' + (record.amount | number:'1.2-2') : '--' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Paginación -->
-          <div *ngIf="filteredVehicleHistory.length > 0" class="pagination-container">
-            <div class="pagination-info">
-              Mostrando {{ startIndex }}-{{ endIndex }} de {{ totalItems }} registros
-            </div>
-            <div class="pagination-controls">
-              <button class="pagination-btn" 
-                      (click)="previousPage()" 
-                      [disabled]="currentPage === 1">
-                ‹ Anterior
-              </button>
-              <span class="pagination-page">Página {{ currentPage }} de {{ totalPages }}</span>
-              <button class="pagination-btn" 
-                      (click)="nextPage()" 
-                      [disabled]="currentPage === totalPages">
-                Siguiente ›
-              </button>
-            </div>
-          </div>
-
-          <!-- Estado vacío -->
-          <div *ngIf="vehicleHistory.length === 0" class="empty-state" id="emptyHistory">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 6v6l4 2"></path>
-              <circle cx="12" cy="12" r="10"></circle>
-            </svg>
-            <p>No hay registros históricos disponibles.</p>
-          </div>
-
-          <!-- Estado de búsqueda sin resultados -->
-          <div *ngIf="vehicleHistory.length > 0 && filteredVehicleHistory.length === 0" class="empty-state">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <p>No se encontraron registros con la placa "{{ historySearch }}".</p>
-          </div>
-        </div>
-      </div>
+    <div *ngIf="activeTab === 'history'">
+      <app-history></app-history>
     </div>
 
-    <div class="tab-content" [class.active]="activeTab === 'reports' && !isLoading">
-      <div class="form-card">
-        <div class="form-card-header">
-          <div class="form-card-title">Reportes</div>
-          <div class="form-card-description">Generar reportes de ingresos y estadísticas</div>
-        </div>
-        <div class="form-card-content">
-          <!-- Filtros de Reporte -->
-          <div class="form-grid" style="margin-bottom: 1.5rem;">
-            <div class="form-group">
-              <label class="form-label" for="reportType">Tipo de Reporte</label>
-              <select class="form-select" id="reportType" [(ngModel)]="reportType" (change)="onReportTypeChange()">
-                <option value="daily">Reporte Diario</option>
-                <option value="custom">Reporte Personalizado</option>
-              </select>
-            </div>
-            
-            <!-- Filtro para reporte diario -->
-            <div class="form-group" *ngIf="reportType === 'daily'">
-              <label class="form-label" for="dailyRange">Rango</label>
-              <select class="form-select" id="dailyRange" [(ngModel)]="dailyRange" (change)="onDailyRangeChange()">
-                <option value="today">Hoy</option>
-                <option value="last_week">Última Semana</option>
-                <option value="last_month">Último Mes</option>
-              </select>
-            </div>
-
-            <!-- Filtros para reporte personalizado -->
-            <div class="form-group" *ngIf="reportType === 'custom'">
-              <label class="form-label" for="startDate">Fecha Inicio</label>
-              <input 
-                class="form-input" 
-                type="date" 
-                id="startDate"
-                [(ngModel)]="startDate"
-                [max]="endDate || maxDate">
-            </div>
-            
-            <div class="form-group" *ngIf="reportType === 'custom'">
-              <label class="form-label" for="endDate">Fecha Fin</label>
-              <input 
-                class="form-input" 
-                type="date" 
-                id="endDate"
-                [(ngModel)]="endDate"
-                [min]="startDate"
-                [max]="maxDate">
-            </div>
-
-            <div class="form-group" style="align-items: flex-end;">
-              <button 
-                class="form-button" 
-                (click)="generateReport()"
-                [disabled]="isGeneratingReport || !isReportFormValid()">
-                <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                {{ isGeneratingReport ? 'Generando...' : 'Generar Reporte' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Resultados del Reporte -->
-          <div *ngIf="reportData && reportData.length > 0" id="reportResults">
-            
-            <!-- Resumen Estadístico -->
-            <div class="stats-grid" style="margin-bottom: 2rem;">
-              <div class="stat-card">
-                <div class="stat-card-header">
-                  <div class="stat-card-title">Total Ingresos</div>
-                  <svg class="stat-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" x2="12" y1="2" y2="22"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>
-                </div>
-                <div class="stat-card-value">${{ totalIncome | number:'1.2-2' }}</div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-card-header">
-                  <div class="stat-card-title">Vehículos Atendidos</div>
-                  <svg class="stat-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path>
-                    <circle cx="7" cy="17" r="2"></circle>
-                    <path d="M9 17h6"></path>
-                    <circle cx="17" cy="17" r="2"></circle>
-                  </svg>
-                </div>
-                <div class="stat-card-value">{{ totalVehicles }}</div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-card-header">
-                  <div class="stat-card-title">Duración Promedio</div>
-                  <svg class="stat-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 6v6l4 2"></path>
-                    <circle cx="12" cy="12" r="10"></circle>
-                  </svg>
-                </div>
-                <div class="stat-card-value">{{ averageDuration }}</div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-card-header">
-                  <div class="stat-card-title">Actualmente Estacionados</div>
-                  <svg class="stat-card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M9 17V7h4a3 3 0 0 1 0 6H9"></path>
-                  </svg>
-                </div>
-                <div class="stat-card-value">{{ currentParked }}</div>
-              </div>
-            </div>
-
-            <!-- Tabla de Reporte Detallado -->
-            <div class="table-container">
-              <table id="reportTable">
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Tipo de Vehículo</th>
-                    <th>Vehículos Atendidos</th>
-                    <th>Ingresos</th>
-                    <th>Duración Promedio</th>
-                  </tr>
-                </thead>
-                <tbody id="reportTableBody">
-                  <tr *ngFor="let item of reportData">
-                    <td>{{ extractDateFromISO(item.report_date) }}</td>
-                    <td>
-                      <span class="badge" 
-                            [class.badge-car]="item.vehicleType === 'CAR'" 
-                            [class.badge-motorcycle]="item.vehicleType === 'MOTORCYCLE'" 
-                            [class.badge-truck]="item.vehicleType === 'TRUCK'">
-                        {{ item.vehicle_type_description || getVehicleTypeLabel(item.vehicleType) }}
-                      </span>
-                    </td>
-                    <td>{{ item.vehicles_served }}</td>
-                    <td>${{ item.total_income | number:'1.2-2' }}</td>
-                    <td>{{ formatDuration(item.avg_duration_minutes) }}</td>
-                  </tr>
-                </tbody>
-                <tfoot *ngIf="reportData.length > 1">
-                  <tr style="font-weight: bold; background-color: #f8fafc;">
-                    <td>TOTAL</td>
-                    <td>-</td>
-                    <td>{{ totalVehicles }}</td>
-                    <td>${{ totalIncome | number:'1.2-2' }}</td>
-                    <td>{{ averageDuration }}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
-            <!-- Información del Período -->
-            <div class="report-period" style="margin-top: 1rem; padding: 1rem; background-color: #f0f9ff; border-radius: 0.5rem; border: 1px solid #bae6fd;">
-              <strong>Período del reporte:</strong> {{ getReportPeriodText() }}
-            </div>
-          </div>
-
-          <!-- Estado sin datos -->
-          <div *ngIf="reportData && reportData.length === 0" class="empty-state">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            <p>No hay datos disponibles para el período seleccionado.</p>
-          </div>
-        </div>
-      </div>
+    <div *ngIf="activeTab === 'reports' && role === 'ADMIN'">
+      <app-reports [stats]="stats"></app-reports>
     </div>
 
     <div *ngIf="activeTab === 'audit' && role === 'ADMIN'">
@@ -584,14 +160,6 @@
     <div *ngIf="activeTab === 'insights' && role === 'ADMIN'">
       <app-insights></app-insights>
     </div>
-
-    <!-- Modal de Ticket de Salida -->
-    <app-parking-ticket
-      *ngIf="showTicketModal && currentTicketData"
-      [ticketData]="currentTicketData"
-      (onClose)="closeTicketModal()"
-      (onPrint)="handleTicketPrint()">
-    </app-parking-ticket>
   </div>
 
   <!-- Refresh Button 

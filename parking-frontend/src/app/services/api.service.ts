@@ -82,65 +82,43 @@ export class ApiService {
     private authService: AuthService
   ) {}
 
-  /*private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }*/
-
   // Auth endpoints
   getProfile() {
-    return this.http.get(`${this.baseUrl}/auth/me`/*, { headers: this.getHeaders() }*/);
+    return this.http.get(`${this.baseUrl}/auth/me`);
   }
 
   // Vehicle endpoints
   registerVehicleEntry(plateNumber: string, vehicleType: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/vehicles/entry`, 
-      { plateNumber, vehicleType }/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.post(`${this.baseUrl}/vehicles/entry`, { plateNumber, vehicleType });
   }
 
   registerVehicleExit(plateNumber: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/vehicles/exit`, 
-      { plateNumber }/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.post(`${this.baseUrl}/vehicles/exit`, { plateNumber });
   }
 
   getParkedVehicles(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/parked`/*, { headers: this.getHeaders() }*/);
+    return this.http.get(`${this.baseUrl}/vehicles/parked`);
   }
 
   getParkingCapacity(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/capacity`/*, { headers: this.getHeaders() }*/);
+    return this.http.get(`${this.baseUrl}/vehicles/capacity`);
   }
 
   getVehicleHistory(page: number = 1, limit: number = 20): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/history?page=${page}&limit=${limit}`/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.get(`${this.baseUrl}/vehicles/history?page=${page}&limit=${limit}`);
   }
 
   // Report endpoints
   getDailyReport(range: string = 'today'): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/daily?range=${range}`/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.get(`${this.baseUrl}/reports/daily?range=${range}`);
   }
 
   getDashboardData(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/dashboard`/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.get(`${this.baseUrl}/reports/dashboard`);
   }
 
   getCustomReport(startDate: string, endDate: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/custom?startDate=${startDate}&endDate=${endDate}`/*, 
-      { headers: this.getHeaders() }*/
-    );
+    return this.http.get(`${this.baseUrl}/reports/custom?startDate=${startDate}&endDate=${endDate}`);
   }
 
   exitVehicle(plateNumber: string): Observable<any> {

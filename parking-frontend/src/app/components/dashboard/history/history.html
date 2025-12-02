@@ -1,0 +1,103 @@
+<div class="tab-content" [class.active]="activeTab === 'history' && !isLoading">
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-title">Historial</div>
+          <div class="form-card-description">Registro histórico de entradas y salidas</div>
+        </div>
+        <div class="form-card-content">
+          <!-- Controles de paginación y filtros -->
+          <div class="form-grid" style="margin-bottom: 1.5rem;">
+            <div class="form-group">
+              <label class="form-label" for="itemsPerPage">Registros por página</label>
+              <select class="form-select" id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="loadVehicleHistory()">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="historySearch">Buscar por placa</label>
+              <input 
+                class="form-input" 
+                type="text" 
+                id="historySearch" 
+                placeholder="Ej: ABC123"
+                [(ngModel)]="historySearch"
+                (input)="onHistorySearch()"
+                maxlength="10"
+                style="flex: 1; text-transform: uppercase;">
+            </div>
+    </div>
+
+          <!-- Tabla de historial SOLO cuando hay datos -->
+          <div *ngIf="filteredVehicleHistory.length > 0" class="table-container">
+            <table id="historyTable">
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Tipo</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                  <th>Tiempo Total</th>
+                  <th>Costo</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr *ngFor="let record of paginatedHistory">
+                  <td>{{ record.plateNumber }}</td>
+                  <td>
+                    <span class="badge" [class.badge-car]="record.vehicleType === 'CAR'" 
+                          [class.badge-motorcycle]="record.vehicleType === 'MOTORCYCLE'"
+                          [class.badge-truck]="record.vehicleType === 'TRUCK'">
+                      {{ getVehicleTypeLabel(record.vehicleType) }}
+                    </span>
+                  </td>
+                  <td>{{ formatDateTime(record.entryTime) }}</td>
+                  <td>{{ record.exitTime ? formatDateTime(record.exitTime) : '--' }}</td>
+                  <td>{{ record.duration ? formatDuration(record.duration) : '--' }}</td>
+                  <td>{{ record.amount ? '$' + (record.amount | number:'1.2-2') : '--' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div *ngIf="filteredVehicleHistory.length > 0" class="pagination-container">
+            <div class="pagination-info">
+              Mostrando {{ startIndex }}-{{ endIndex }} de {{ totalItems }} registros
+            </div>
+            <div class="pagination-controls">
+              <button class="pagination-btn" 
+                      (click)="previousPage()" 
+                      [disabled]="currentPage === 1">
+                ‹ Anterior
+              </button>
+              <span class="pagination-page">Página {{ currentPage }} de {{ totalPages }}</span>
+              <button class="pagination-btn" 
+                      (click)="nextPage()" 
+                      [disabled]="currentPage === totalPages">
+                Siguiente ›
+              </button>
+            </div>
+          </div>
+
+          <!-- Estado vacío -->
+          <div *ngIf="vehicleHistory.length === 0" class="empty-state" id="emptyHistory">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 6v6l4 2"></path>
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            <p>No hay registros históricos disponibles.</p>
+          </div>
+
+          <!-- Estado de búsqueda sin resultados -->
+          <div *ngIf="vehicleHistory.length > 0 && filteredVehicleHistory.length === 0" class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <p>No se encontraron registros con la placa "{{ historySearch }}".</p>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -11,7 +11,6 @@ import {
   DashboardData,
   InsightsFilters,
   VEHICLE_TYPES,
-  VehicleType,
   CurrentOccupancy
 } from '../../../interfaces/insights';
 

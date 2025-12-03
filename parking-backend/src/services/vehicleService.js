@@ -57,7 +57,7 @@ class VehicleService {
       // Generar ticket (fuera de la transacción)
       const ticketResult = await ticketService.generateExitTicket(plateNumber);
 
-      // ✅ 3. Auditoría de generación de ticket
+      // Auditoría de generación de ticket
       await auditService.createLog({
         usuario: user,
         accion: 'GENERATE_TICKET',
@@ -122,7 +122,7 @@ class VehicleService {
     }
   }
 
-  async getVehicleHistory(page = 1, limit = 20) {
+  async getVehicleHistory(page = 1, limit = 20, searchPlate = '') {
     // Obtener historial de vehículos con paginación desde la vista
     try {
 
@@ -135,16 +135,29 @@ class VehicleService {
 
       const offset = (page - 1) * limit;
 
-      const [rows] = await pool.query(`
-        SELECT * FROM vehiclehistory 
-        ORDER BY entryTime DESC 
-        LIMIT ? OFFSET ?
-      `, [limit, offset]);
+      let query = `SELECT * FROM vehiclehistory`;
+      let countQuery = 'SELECT COUNT(*) as total FROM vehiclehistory';
 
-      const [[{ total }]] = await pool.query(
-        'SELECT COUNT(*) as total FROM vehiclehistory'
-      );
+      const params = [];
+      const countParams = [];
+      
+      // ✅ Agregar filtro de búsqueda si existe
+      if (searchPlate && searchPlate.trim() !== '') {
+        const searchCondition = ` WHERE plateNumber LIKE ?`;
+        query += searchCondition;
+        countQuery += searchCondition;
+        
+        const searchTerm = `${searchPlate.trim()}`;
+        params.push(searchTerm);
+        countParams.push(searchTerm);
+      }
 
+      query += ` ORDER BY entryTime DESC LIMIT ? OFFSET ?`;
+      params.push(limit, offset);
+      console.log(query, params);
+
+      const [rows] = await pool.query(query, params);
+      const [[{ total }]] = await pool.query(countQuery, countParams);
       return {
         success: true,
         data: rows,

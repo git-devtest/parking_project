@@ -60,9 +60,9 @@ class VehicleController {
 
   async getVehicleHistory(req, res, next) {
     try {
-      const { page = 1, limit = 20 } = req.query;
+      const { page = 1, limit = 20, searchPlate = '' } = req.query;
       
-      const result = await vehicleService.getVehicleHistory(page, limit);
+      const result = await vehicleService.getVehicleHistory(page, limit, searchPlate);
       
       res.status(200).json(result);
     } catch (error) {

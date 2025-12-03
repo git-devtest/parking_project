@@ -17,8 +17,8 @@
                 <th>Usuario</th>
                 <th>Acción</th>
                 <th>Tablas Afectadas</th>
-                <th>SQL Ejecutado</th>
-                <th>SQL Rollback</th>
+                <th>Acción Ejecutada</th>
+                <th>Acción Rollback</th>
                 <th>IP Cliente</th>
               </tr>
             </thead>
@@ -40,17 +40,19 @@
                       'badge-delete': log.accion === 'DELETE',
                       'badge-downloadBackup': log.accion === 'BACKUP_DOWNLOAD',
                       'badge-createBackup': log.accion === 'BACKUP_CREATE',
-                      'badge-viewJsonBackup': log.accion === 'BACKUP_VIEW'
+                      'badge-viewJsonBackup': log.accion === 'BACKUP_VIEW',
+                      'badge-generateTicket': log.accion === 'GENERATE_TICKET',
+                      'badge-reprintTicket': log.accion === 'REPRINT_TICKET'
                     }">
                     {{ log.accion }}
                   </span>
                 </td>
                 <td>{{ log.tabla_afectada }}</td>
                 <td>
-                  <button class="audit-btn" (click)="openSqlModal(log.sql_ejecutado)">Ver SQL</button>
+                  <button class="audit-btn" (click)="openSqlModal(log.sql_ejecutado)">Ver Acción Ejecutada</button>
                 </td>
                 <td>
-                  <button class="audit-btn secondary" (click)="openRollbackModal(log.sql_rollback)">Ver Rollback</button>
+                  <button class="audit-btn secondary" (click)="openRollbackModal(log.sql_rollback)">Ver Acción Rollback</button>
                 </td>
                 <td>{{ log.ip_cliente }}</td>
               </tr>

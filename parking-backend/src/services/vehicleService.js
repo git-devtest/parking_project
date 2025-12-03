@@ -1,6 +1,7 @@
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 const ticketService = require('./ticketService');
+const auditService = require('./auditService');
 
 class VehicleService {
   async registerEntry(plateNumber, vehicleType, user) {
@@ -17,6 +18,7 @@ class VehicleService {
       await connection.commit();
 
       logger.info(`Entrada registrada: ${plateNumber} - ${vehicleType}\nUsuario registra entrada: ${user}`);
+      
       return {
         success: true,
         message: 'Entrada registrada exitosamente',
@@ -55,7 +57,19 @@ class VehicleService {
       // Generar ticket (fuera de la transacción)
       const ticketResult = await ticketService.generateExitTicket(plateNumber);
 
-      // Retornar ambos resultados
+      // ✅ 3. Auditoría de generación de ticket
+      await auditService.createLog({
+        usuario: user,
+        accion: 'GENERATE_TICKET',
+        tabla_afectada: 'ParkingSession',
+        registro_id: 0,
+        sql_ejecutado: `GENERACIÓN DE TICKET DE SALIDA\nPlaca: ${plateNumber}\nTicket ID: ${ticketResult.data.ticketId}`,
+        sql_rollback: 'CANNOT ROLLBACK TICKET GENERATION',
+        ip_cliente: 'SERVER',
+        fecha_evento: new Date()
+      });
+
+      // 4. Retornar ambos resultados
       return {
         success: true,
         message: exitData.message || 'Salida registrada exitosamente',
@@ -64,6 +78,7 @@ class VehicleService {
           ticket: ticketResult.data
         }
       };
+
     } catch (error) {
       await connection.rollback();
       logger.error(`Error registrando salida: ${error.message}`);

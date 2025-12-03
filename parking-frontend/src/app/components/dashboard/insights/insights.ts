@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { InsightsService } from '../../../services/insights.services';
+import { InsightsService } from '../../../services/insights.service';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import {

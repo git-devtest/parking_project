@@ -177,6 +177,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
             }
           },
           datalabels: {
+            anchor: 'center',
             color: '#000',
             font: {
               weight: 'bold',
@@ -185,7 +186,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
             formatter: (value, context) => {
               const total = data.reduce((sum, d) => sum + parseFloat(d.ingresos_totales), 0);
               const percentage = ((value / total) * 100).toFixed(1);
-              return `${percentage}%\n${value.toLocaleString()}`;
+              return `${value.toLocaleString()}\n(${percentage}%)`;
             }
           }
         }
@@ -239,7 +240,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
             }
           },
           datalabels: {
-            anchor: 'end',
+            anchor: 'center',
             align: 'top',
             color: '#1f2937',
             font: {
@@ -294,7 +295,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
             font: { size: 16, weight: 'bold' }
           },
           datalabels: {
-            anchor: 'end',
+            anchor: 'center',
             align: 'top',
             color: '#1f2937',
             font: {
@@ -440,6 +441,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
             }
           },
           datalabels: {
+            anchor: 'center',
             color: '#000',
             font: {
               weight: 'bold',
@@ -449,7 +451,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
               if (!value) return '';
               const total = chartData.reduce((sum, d) => sum + d.rotaciones, 0);
               const percentage = ((value / total) * 100).toFixed(1);
-              return `${percentage}%\n${value}`;
+              return `${value}\n(${percentage}%)`;
             }
           }
         }

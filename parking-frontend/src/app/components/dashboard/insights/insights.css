@@ -448,13 +448,13 @@ tr:hover {
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .filter-group label {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
 }
 
 .date-input,
@@ -520,4 +520,9 @@ tr:hover {
   cursor: not-allowed;
 }
 
-
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}

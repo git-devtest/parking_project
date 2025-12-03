@@ -52,11 +52,6 @@ export class InsightsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadDashboard();
     this.loadCurrentOccupancy();
-    
-    // Auto-refresh ocupación cada 30 segundos
-    this.occupancyInterval = setInterval(() => {
-      this.loadCurrentOccupancy();
-    }, 30000);
   }
 
   ngOnDestroy(): void {

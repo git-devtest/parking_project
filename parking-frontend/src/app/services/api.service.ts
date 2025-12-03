@@ -104,8 +104,12 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/vehicles/capacity`);
   }
 
-  getVehicleHistory(page: number = 1, limit: number = 20): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/history?page=${page}&limit=${limit}`);
+  getVehicleHistory(page: number = 1, limit: number = 20, searchPlate?: string): Observable<any> {
+    let params = `page=${page}&limit=${limit}`;
+    if (searchPlate && searchPlate.trim() !== '') {
+      params += `&searchPlate=${encodeURIComponent(searchPlate.trim())}`;
+    }
+    return this.http.get(`${this.baseUrl}/vehicles/history?${params}`);
   }
 
   // Report endpoints

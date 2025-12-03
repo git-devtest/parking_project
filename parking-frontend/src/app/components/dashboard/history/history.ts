@@ -35,7 +35,8 @@ export class HistoryComponent {
   }
   // Cargar historial de vehículos - pasar a HistoryComponent
   loadVehicleHistory(): void {
-    this.apiService.getVehicleHistory(this.currentPage, this.itemsPerPage).subscribe({
+    const searchTerm = this.historySearch.trim().toUpperCase();
+    this.apiService.getVehicleHistory(this.currentPage, this.itemsPerPage, searchTerm).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.vehicleHistory = response.data || [];
@@ -60,26 +61,13 @@ export class HistoryComponent {
     });
   }
 
-  // Filtrar historial por placa - pasar a HistoryComponent
+  // Filtrar historial por placa
   onHistorySearch(): void {
     this.currentPage = 1;
-    this.filterVehicleHistory();
+    this.loadVehicleHistory();
   }
 
-  // Filtrar historial por placa
-  filterVehicleHistory(): void {
-    const searchTerm = this.historySearch.trim().toUpperCase();
-    if (!searchTerm) {
-      this.filteredVehicleHistory = this.vehicleHistory;
-    } else {
-      this.filteredVehicleHistory = this.vehicleHistory.filter(record =>
-        record.plateNumber?.includes(searchTerm)
-      );
-    }
-    this.paginatedHistory = this.filteredVehicleHistory;
-  }
-
-  // Obtener etiqueta del tipo de vehículo - pasar a HistoryComponent
+  // Obtener etiqueta del tipo de vehículo
   getVehicleTypeLabel(vehicleType: string): string {
     const types: { [key: string]: string } = {
       'CAR': 'Automóvil',
@@ -108,7 +96,7 @@ export class HistoryComponent {
     }
   }
 
-  // Paginación - pasar a HistoryComponent
+  // Paginación
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -116,7 +104,7 @@ export class HistoryComponent {
     }
   }
 
-  // Paginación - pasar a HistoryComponent
+  // Paginación
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;

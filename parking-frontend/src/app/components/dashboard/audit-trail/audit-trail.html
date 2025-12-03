@@ -40,7 +40,6 @@
                       'badge-delete': log.accion === 'DELETE',
                       'badge-downloadBackup': log.accion === 'BACKUP_DOWNLOAD',
                       'badge-createBackup': log.accion === 'BACKUP_CREATE',
-                      'badge-viewJsonBackup': log.accion === 'BACKUP_VIEW',
                       'badge-generateTicket': log.accion === 'GENERATE_TICKET',
                       'badge-reprintTicket': log.accion === 'REPRINT_TICKET'
                     }">
@@ -77,7 +76,7 @@
   <!-- SQL ejecutado -->
   <div class="modal-backdrop" *ngIf="showSqlModal">
     <div class="modal-window">
-      <h3>SQL Ejecutado</h3>
+      <h3>Acción Ejecutada</h3>
       <pre class="sql-box" *ngIf="selectedSqlSafe" [innerHTML]="selectedSqlSafe"></pre>
       <button class="close-btn" (click)="closeModals()">Cerrar</button>
     </div>
@@ -86,7 +85,7 @@
   <!-- SQL rollback -->
   <div class="modal-backdrop" *ngIf="showRollbackModal">
     <div class="modal-window">
-      <h3>SQL Rollback</h3>
+      <h3>Acción Rollback</h3>
       <pre class="sql-box rollback" *ngIf="selectedRollbackSafe" [innerHTML]="selectedRollbackSafe"></pre>
       <button class="close-btn" (click)="closeModals()">Cerrar</button>
     </div>

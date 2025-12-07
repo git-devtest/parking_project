@@ -92,189 +92,188 @@ class UserController {
   }
 
   // ACTUALIZAR (UPDATE) — versión final, estable y full auditoría
-async updateUser(req, res) {
-  try {
-    const { id } = req.params;
-    const payload = req.body;
+  async updateUser(req, res) {
+    try {
+      const { id } = req.params;
+      const payload = req.body;
 
-    // 1. Verificar existencia del usuario
-    const exists = await User.findById(id);
-    if (!exists) {
-      return res.status(404).json({
+      // 1. Verificar existencia del usuario
+      const exists = await User.findById(id);
+      if (!exists) {
+        return res.status(404).json({
+          success: false,
+          message: "Usuario no encontrado"
+        });
+      }
+
+      console.log("=== DEBUG UPDATE USER ===");
+      console.log("Prev user:", exists);
+      console.log("Payload:", payload);
+
+      // Objetos base
+      const fields = [];
+      const values = [];
+
+      // =============================
+      // 2. Procesar campos normales
+      // =============================
+
+      // username
+      if (
+        typeof payload.username === "string" &&
+        payload.username.trim() !== "" &&
+        payload.username.trim() !== exists.username
+      ) {
+        fields.push("username = ?");
+        values.push(payload.username.trim());
+      }
+
+      // email
+      if (
+        typeof payload.email === "string" &&
+        payload.email.trim() !== "" &&
+        payload.email.trim() !== exists.email
+      ) {
+        fields.push("email = ?");
+        values.push(payload.email.trim());
+      }
+
+      // role
+      if (
+        typeof payload.role === "string" &&
+        payload.role.trim() !== "" &&
+        payload.role.trim() !== exists.role
+      ) {
+        fields.push("role = ?");
+        values.push(payload.role.trim());
+      }
+
+      // isActive (nuevo)
+      if (
+        payload.isActive !== undefined &&
+        String(payload.isActive) !== String(exists.isActive)
+      ) {
+        fields.push("isActive = ?");
+        values.push(Number(payload.isActive));
+      }
+
+      // =============================
+      // 3. Procesar password
+      // =============================
+      let passwordWasUpdated = false;
+
+      if (
+        typeof payload.password === "string" &&
+        payload.password.trim() !== ""
+      ) {
+        // Encriptar password
+        const bcrypt = require("bcryptjs");
+        const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+        fields.push("password = ?");
+        values.push(hashedPassword);
+        passwordWasUpdated = true;
+      }
+
+      // =============================
+      // 4. Validar si NO hay cambios
+      // =============================
+      if (fields.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "No hay cambios para actualizar"
+        });
+      }
+
+      // =============================
+      // 5. Construir SQL EXECUTED
+      //     → NO mostramos password real
+      // =============================
+      const sqlExecutedParts = [];
+
+      if (payload.username && payload.username !== exists.username) {
+        sqlExecutedParts.push(`username='${payload.username}'`);
+      }
+
+      if (payload.email && payload.email !== exists.email) {
+        sqlExecutedParts.push(`email='${payload.email}'`);
+      }
+
+      if (payload.role && payload.role !== exists.role) {
+        sqlExecutedParts.push(`role='${payload.role}'`);
+      }
+
+      if (passwordWasUpdated) {
+        sqlExecutedParts.push(`password='[ENCRYPTED]'`);
+      }
+
+      function sanitize(v) {
+        if (typeof v !== "string") return v;
+        return v.replace(/'/g, "\\'");
+      }
+
+      const sqlExecuted = `UPDATE users SET ${sqlExecutedParts.join(", ")} WHERE id='${id}';`;
+
+      // =============================
+      // 6. Construir SQL ROLLBACK (estado previo)
+      // =============================
+      const sqlRollback = `
+        UPDATE users SET
+          username='${exists.username}',
+          email='${exists.email}',
+          role='${exists.role}',
+          isActive=${exists.isActive ? 1 : 0},
+          password='${passwordWasUpdated ? exists.password : "[UNCHANGED]"}'
+        WHERE id='${id}';
+      `.trim();
+
+      // =============================
+      // 7. Ejecutar UPDATE real
+      // =============================
+      const updateSql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+      values.push(id);
+
+      const [result] = await pool.query(updateSql, values);
+
+      // =============================
+      // 8. IP normalizada
+      // =============================
+      const rawIp = req.ip || req.connection.remoteAddress || "unknown";
+      const ip = (rawIp === "::1" || rawIp === "127.0.0.1") ? "localhost" : rawIp;
+
+      // =============================
+      // 9. Auditoría
+      // =============================
+      await auditService.createLog({
+        usuario: req.user.username,
+        accion: "UPDATE",
+        tabla_afectada: "users",
+        registro_id: id,
+        sql_ejecutado: sqlExecuted,
+        sql_rollback: sqlRollback,
+        ip_cliente: ip,
+        fecha_evento: new Date()
+      });
+
+      // =============================
+      // 10. Winston
+      // =============================
+      logger.info(`User ${id} updated by ${req.user.username}`);
+
+      return res.json({
+        success: true,
+        message: "Usuario actualizado correctamente",
+        affectedRows: result.affectedRows
+      });
+
+    } catch (error) {
+      logger.error(`Error updateUser: ${error.message}`, { error });
+      return res.status(500).json({
         success: false,
-        message: "Usuario no encontrado"
+        message: "Error interno del servidor"
       });
     }
-
-    console.log("=== DEBUG UPDATE USER ===");
-    console.log("Prev user:", exists);
-    console.log("Payload:", payload);
-
-    // Objetos base
-    const fields = [];
-    const values = [];
-
-    // =============================
-    // 2. Procesar campos normales
-    // =============================
-
-    // username
-    if (
-      typeof payload.username === "string" &&
-      payload.username.trim() !== "" &&
-      payload.username.trim() !== exists.username
-    ) {
-      fields.push("username = ?");
-      values.push(payload.username.trim());
-    }
-
-    // email
-    if (
-      typeof payload.email === "string" &&
-      payload.email.trim() !== "" &&
-      payload.email.trim() !== exists.email
-    ) {
-      fields.push("email = ?");
-      values.push(payload.email.trim());
-    }
-
-    // role
-    if (
-      typeof payload.role === "string" &&
-      payload.role.trim() !== "" &&
-      payload.role.trim() !== exists.role
-    ) {
-      fields.push("role = ?");
-      values.push(payload.role.trim());
-    }
-
-    // isActive (nuevo)
-    if (
-      payload.isActive !== undefined &&
-      String(payload.isActive) !== String(exists.isActive)
-    ) {
-      fields.push("isActive = ?");
-      values.push(Number(payload.isActive));
-    }
-
-    // =============================
-    // 3. Procesar password
-    // =============================
-    let passwordWasUpdated = false;
-
-    if (
-      typeof payload.password === "string" &&
-      payload.password.trim() !== ""
-    ) {
-      // Encriptar password
-      const bcrypt = require("bcryptjs");
-      const hashedPassword = await bcrypt.hash(payload.password, 10);
-
-      fields.push("password = ?");
-      values.push(hashedPassword);
-      passwordWasUpdated = true;
-    }
-
-    // =============================
-    // 4. Validar si NO hay cambios
-    // =============================
-    if (fields.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No hay cambios para actualizar"
-      });
-    }
-
-    // =============================
-    // 5. Construir SQL EXECUTED
-    //     → NO mostramos password real
-    // =============================
-    const sqlExecutedParts = [];
-
-    if (payload.username && payload.username !== exists.username) {
-      sqlExecutedParts.push(`username='${payload.username}'`);
-    }
-
-    if (payload.email && payload.email !== exists.email) {
-      sqlExecutedParts.push(`email='${payload.email}'`);
-    }
-
-    if (payload.role && payload.role !== exists.role) {
-      sqlExecutedParts.push(`role='${payload.role}'`);
-    }
-
-    if (passwordWasUpdated) {
-      sqlExecutedParts.push(`password='[ENCRYPTED]'`);
-    }
-
-    function sanitize(v) {
-      if (typeof v !== "string") return v;
-      return v.replace(/'/g, "\\'");
-    }
-
-    const sqlExecuted = `UPDATE users SET ${sqlExecutedParts.join(", ")} WHERE id='${id}';`;
-
-    // =============================
-    // 6. Construir SQL ROLLBACK (estado previo)
-    // =============================
-    const sqlRollback = `
-      UPDATE users SET
-        username='${exists.username}',
-        email='${exists.email}',
-        role='${exists.role}',
-        isActive=${exists.isActive ? 1 : 0},
-        password='${passwordWasUpdated ? exists.password : "[UNCHANGED]"}'
-      WHERE id='${id}';
-    `.trim();
-
-    // =============================
-    // 7. Ejecutar UPDATE real
-    // =============================
-    const updateSql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
-    values.push(id);
-
-    const [result] = await pool.query(updateSql, values);
-
-    // =============================
-    // 8. IP normalizada
-    // =============================
-    const rawIp = req.ip || req.connection.remoteAddress || "unknown";
-    const ip = (rawIp === "::1" || rawIp === "127.0.0.1") ? "localhost" : rawIp;
-
-    // =============================
-    // 9. Auditoría
-    // =============================
-    await auditService.createLog({
-      usuario: req.user.username,
-      accion: "UPDATE",
-      tabla_afectada: "users",
-      registro_id: id,
-      sql_ejecutado: sqlExecuted,
-      sql_rollback: sqlRollback,
-      ip_cliente: ip,
-      fecha_evento: new Date()
-    });
-
-    // =============================
-    // 10. Winston
-    // =============================
-    logger.info(`User ${id} updated by ${req.user.username}`);
-
-    return res.json({
-      success: true,
-      message: "Usuario actualizado correctamente",
-      affectedRows: result.affectedRows
-    });
-
-  } catch (error) {
-    logger.error(`Error updateUser: ${error.message}`, { error });
-    return res.status(500).json({
-      success: false,
-      message: "Error interno del servidor"
-    });
   }
-}
-
 
   // DELETE (soft delete)
   async deleteUser(req, res) {
@@ -311,6 +310,78 @@ async updateUser(req, res) {
 
     } catch (error) {
       logger.error(`Error deleteUser: ${error.message}`, { error });
+      return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+  }
+
+  // PUT (cambiar contraseña)
+  async changePassword(req, res) {
+    try {
+      // 🔍 DEBUG - Ver qué trae el token
+      console.log('===== DEBUG CHANGE PASSWORD =====');
+      console.log('req.user completo:', req.user);
+      console.log('req.user.id:', req.user.id);
+      console.log('Body recibido:', req.body);
+
+      const userId = req.user.id;
+      console.log('userId a buscar:', userId);
+      const { currentPassword, newPassword } = req.body;
+      console.log('currentPassword:', currentPassword);
+      console.log('newPassword:', newPassword);
+
+      console.log(`Cambio de contraseña solicitado por usuario ID: ${userId}`);
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Se requieren ambas contraseñas'
+        });
+      }
+
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'La nueva contraseña debe tener al menos 8 caracteres'
+        });
+      }
+
+      console.log(`User ID: ${userId}`);
+      console.log(`Current Password: ${currentPassword}`);
+      console.log(`New Password: ${newPassword}`);
+      console.log(`GET /api/users/${userId} by ${req.user?.username || 'anonymous'}`);
+      
+      // Cambiar contraseña
+      await User.changePassword(userId, currentPassword, newPassword);
+
+      const rawIp = req.ip || req.connection.remoteAddress || "unknown";
+      const ip = (rawIp === "::1" || rawIp === "127.0.0.1" ? "localhost" : rawIp);
+
+      await auditService.createLog({
+        usuario: req.user.username,
+        accion: 'CHANGE_PASSWORD',
+        tabla_afectada: 'users',
+        registro_id: 0,
+        sql_ejecutado: `UPDATE users SET password='[ENCRYPTED]' WHERE id='${userId}';`,
+        sql_rollback: 'CANNOT ROLLBACK PASSWORD CHANGE',
+        ip_cliente: ip,
+        fecha_evento: new Date()
+      });
+
+      console.log(`Password changed for user ID: ${userId}`);
+      console.log('✅ Contraseña cambiada exitosamente');
+      console.log(`👤 Usuario: ${userId}`);
+      console.log(`🔑 Password: ${newPassword}`);
+      return res.json({ success: true, message: 'Contraseña cambiada correctamente' });
+
+    } catch (error) {
+      console.error(`Error changePassword: ${error.message}`, { error });
+      // ✅ Distinguir entre error de contraseña incorrecta vs error del sistema
+      if (error.message === 'Invalid password') {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'La contraseña actual es incorrecta' 
+        });
+      }
       return res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
   }

@@ -34,7 +34,7 @@ class User {
     }
 
     const [rows] = await pool.query(
-      `SELECT id, username, email, role, isActive, createdAt
+      `SELECT id, username, password, email, role, isActive, createdAt
        FROM users
        WHERE id = ?`,
       [id]
@@ -97,6 +97,27 @@ class User {
     );
     return true;
   } 
+
+  // Cambiar contraseña
+  static async changePassword(id, currentPassword, newPassword) {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      throw new Error("Invalid password");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await pool.query(
+      `UPDATE users SET password = ? WHERE id = ?`,
+      [hashedPassword, id]
+    );
+    return true;
+  }
+
 }
 
 module.exports = User;

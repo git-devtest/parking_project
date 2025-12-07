@@ -317,18 +317,8 @@ class UserController {
   // PUT (cambiar contraseña)
   async changePassword(req, res) {
     try {
-      // 🔍 DEBUG - Ver qué trae el token
-      console.log('===== DEBUG CHANGE PASSWORD =====');
-      console.log('req.user completo:', req.user);
-      console.log('req.user.id:', req.user.id);
-      console.log('Body recibido:', req.body);
-
       const userId = req.user.id;
-      console.log('userId a buscar:', userId);
       const { currentPassword, newPassword } = req.body;
-      console.log('currentPassword:', currentPassword);
-      console.log('newPassword:', newPassword);
-
       console.log(`Cambio de contraseña solicitado por usuario ID: ${userId}`);
 
       if (!currentPassword || !newPassword) {
@@ -345,11 +335,6 @@ class UserController {
         });
       }
 
-      console.log(`User ID: ${userId}`);
-      console.log(`Current Password: ${currentPassword}`);
-      console.log(`New Password: ${newPassword}`);
-      console.log(`GET /api/users/${userId} by ${req.user?.username || 'anonymous'}`);
-      
       // Cambiar contraseña
       await User.changePassword(userId, currentPassword, newPassword);
 

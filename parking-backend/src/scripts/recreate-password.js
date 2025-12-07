@@ -17,7 +17,7 @@ async function testPassword() {
   });
 }
 
-testPassword();
+//testPassword();
 //resetPassword();
 // admin123 - $2b$10$C.r1XnEuu3xpuLqUXDvi9.3g0qmyN97POvipGoOr/huw5s5eNk3UW
 // jeimy123 - $2b$10$pR8chnx2VBTZeXv7q3AeMOgFQDAFn25zjR7AmPBtf/PxMUO/kHMjO

@@ -56,6 +56,15 @@ export class Dashboard implements OnInit, OnDestroy {
 
   role: string = '';
 
+  showChangePasswordModal = false;
+  passwordForm = {
+    current: '',
+    new: '',
+    confirm: ''
+  };
+  alertMessage: string = '';
+  alertType: string = '';
+
   constructor(
     private authService: AuthService,
     private apiService: ApiService,
@@ -142,6 +151,49 @@ export class Dashboard implements OnInit, OnDestroy {
   // Método para refrescar datos
   refreshData(): void {
     this.loadDashboardData();
+  }
+
+  openChangePasswordModal() {
+    this.passwordForm = { current: '', new: '', confirm: '' };
+    this.showChangePasswordModal = true;
+  }
+
+  closeChangePasswordModal() {
+    this.showChangePasswordModal = false;
+  }
+
+  changePassword() {
+    // Validaciones
+    if (this.passwordForm.new !== this.passwordForm.confirm) {
+      this.showAlert('Las contraseñas no coinciden', 'error');
+      return;
+    }
+
+    if (this.passwordForm.new.length < 8) {
+      this.showAlert('La contraseña debe tener al menos 8 caracteres', 'error');
+      return;
+    }
+
+    this.apiService.changePassword(this.passwordForm.current, this.passwordForm.new).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showAlert('Contraseña actualizada exitosamente', 'success');
+          this.closeChangePasswordModal();
+        }
+      },
+      error: (error) => {
+        this.showAlert(error.error?.message || 'Error al cambiar contraseña', 'error');
+      }
+    });
+  }
+
+  showAlert(message: string, type: string) {
+    this.alertMessage = message;
+    this.alertType = type;
+    setTimeout(() => {
+      this.alertMessage = '';
+      this.alertType = '';
+    }, 3000);
   }
  
 }

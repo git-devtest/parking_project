@@ -132,4 +132,12 @@ export class ApiService {
   getLastTicket(plateNumber: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/tickets/last/${plateNumber}`);
   }
+
+  // api.service.ts
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/users/change-password`, {
+      currentPassword,
+      newPassword
+    });
+  }
 }

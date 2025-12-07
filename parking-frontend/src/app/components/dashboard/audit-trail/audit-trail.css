@@ -37,6 +37,7 @@
 .badge.downloadBackup { background: #f59e0b; } /* Ámbar */
 .badge.createBackup { background: #7c3aed; } /* Púrpura */
 .badge.viewJsonBackup { background: #d97706;}
+.badge.changePassword { background: #9e2a33;}
 
 .pagination-controls {
   display: flex;
@@ -126,9 +127,15 @@
   background: #98d8b7;
   color: #365eaf;
 }
+
 .badge-reprintTicket {
   background: #9197e9;
   color: #232c3d;
+}
+
+.badge-changePassword {
+  background: #9e2a33;
+  color: #ffffff;
 }
 
 

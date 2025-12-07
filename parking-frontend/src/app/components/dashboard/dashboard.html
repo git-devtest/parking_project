@@ -8,6 +8,7 @@
     <div class="user-info">
       <span>Bienvenido, {{ currentUser?.username }}</span>
       <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+      <button class="logout-btn" (click)="openChangePasswordModal()">🔐 Cambiar Contraseña</button>
       <span> BD: {{ dbInfo?.version }} </span>
     </div>
   </div>
@@ -159,6 +160,47 @@
 
     <div *ngIf="activeTab === 'insights' && role === 'ADMIN'">
       <app-insights></app-insights>
+    </div>
+  </div>
+
+  <!-- Modal de Cambio de Contraseña -->
+  <div class="modal-backdrop" *ngIf="showChangePasswordModal">
+    <div class="modal-window">
+      <h3>Cambiar Contraseña</h3>
+      <form (ngSubmit)="changePassword()">
+        <label class="modal-label">Contraseña Actual</label>
+        <input 
+          class="modal-input" 
+          type="password" 
+          [(ngModel)]="passwordForm.current" 
+          name="current"
+          required 
+          placeholder="Ingrese contraseña actual">
+
+        <label class="modal-label">Nueva Contraseña</label>
+        <input 
+          class="modal-input" 
+          type="password" 
+          [(ngModel)]="passwordForm.new" 
+          name="new"
+          required 
+          minlength="8"
+          placeholder="Mínimo 8 caracteres">
+
+        <label class="modal-label">Confirmar Nueva Contraseña</label>
+        <input 
+          class="modal-input" 
+          type="password" 
+          [(ngModel)]="passwordForm.confirm" 
+          name="confirm"
+          required 
+          placeholder="Repita la nueva contraseña">
+
+        <div class="modal-actions" style="margin-top: 18px;">
+          <button class="btn btn-save" type="submit">Cambiar Contraseña</button>
+          <button class="btn btn-cancel" type="button" (click)="closeChangePasswordModal()">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
 

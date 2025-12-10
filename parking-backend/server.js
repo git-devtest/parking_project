@@ -51,6 +51,7 @@ const startServer = async () => {
       logger.info(`🚀 Servidor ejecutándose en puerto ${PORT}`);
       logger.info(`📊 Ambiente: ${process.env.NODE_ENV}`);
       logger.info(`🌐 Health check: http://localhost:${PORT}/health`);
+      logger.info(`🌐 Documentación: http://localhost:${PORT}/api-docs`);
       logger.info('🕐 Servidor configurado con zona horaria:', process.env.TZ);
     });
 

@@ -5,19 +5,19 @@ const { authenticateToken } = require('../middleware/auth');
 const { validateDateRange } = require('../middleware/validation');
 
 /**
- * @description Ruta para obtener los logs de auditoría con paginación
+ * @description: Obtiene los logs de auditoría con paginación
  * @route GET /dashboard
  */
 router.get('/dashboard', authenticateToken, auditController.getAuditLogs);
 
 /**
- * @description Ruta para obtener los logs de auditoría basados en el rango especificado
+ * @description: Obtiene los logs de auditoría basados en el rango especificado
  * @route GET /daily
  */
 router.get('/daily', authenticateToken, validateDateRange, auditController.getAuditLogsDaily);
 
 /**
- * @description Ruta para obtener los logs de auditoría basados en un rango de fechas personalizado
+ * @description: Obtiene los logs de auditoría personalizados
  * @route GET /custom
  */
 router.get('/custom', authenticateToken, auditController.getAuditLogCustom);

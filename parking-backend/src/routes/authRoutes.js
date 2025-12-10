@@ -5,7 +5,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 const { loginValidation, registerValidation } = require('../middleware/authValidation');
 
 /**
- * @description Login
+ * @description: Iniciar sesión
  * @route POST /login
  */
 router.post('/login', loginValidation, authController.login);
@@ -23,7 +23,7 @@ router.get('/me', authenticateToken, authController.getProfile);
 router.post('/register', authenticateToken, requireRole(['ADMIN']), registerValidation, authController.register);
 
 /**
- * @description Obtener usuarios (solo admin)
+ * @description Obtener todos los usuarios (solo admin)
  * @route GET /users
  */
 router.get('/users', authenticateToken, requireRole(['ADMIN']), authController.getUsers);

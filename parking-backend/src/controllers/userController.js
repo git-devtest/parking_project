@@ -4,6 +4,18 @@ const { validationResult } = require('express-validator');
 const auditService = require('../services/auditService'); // ajusta si tu service tiene otro nombre
 const logger = require('../utils/logger'); // tu winston
 const crypto = require('crypto');
+const { pool } = require('../config/database');
+
+/**
+ * @description Sanitiza una cadena de texto
+ * @module sanitize
+ * @param {string} v - Cadena de texto a sanitizar
+ * @returns {string} Cadena de texto sanitizada
+ */
+function sanitize(v) {
+  if (typeof v !== "string") return v;
+    return v.replace(/'/g, "\\'");
+}
 
 /**
  * @description Controlador para usuarios
@@ -89,7 +101,7 @@ class UserController {
         usuario: req.user.username,
         accion: 'INSERT',
         tabla_afectada: 'users',
-        registro_id: id,
+        registro_id: 0,
         sql_ejecutado: sqlExecuted,
         sql_rollback: sqlRollback,
         ip_cliente: ip,
@@ -191,7 +203,6 @@ class UserController {
         payload.password.trim() !== ""
       ) {
         // Encriptar password
-        const bcrypt = require("bcryptjs");
         const hashedPassword = await bcrypt.hash(payload.password, 10);
 
         fields.push("password = ?");
@@ -231,11 +242,6 @@ class UserController {
         sqlExecutedParts.push(`password='[ENCRYPTED]'`);
       }
 
-      function sanitize(v) {
-        if (typeof v !== "string") return v;
-        return v.replace(/'/g, "\\'");
-      }
-
       const sqlExecuted = `UPDATE users SET ${sqlExecutedParts.join(", ")} WHERE id='${id}';`;
 
       // =============================
@@ -272,7 +278,7 @@ class UserController {
         usuario: req.user.username,
         accion: "UPDATE",
         tabla_afectada: "users",
-        registro_id: id,
+        registro_id: 0,
         sql_ejecutado: sqlExecuted,
         sql_rollback: sqlRollback,
         ip_cliente: ip,
@@ -326,7 +332,7 @@ class UserController {
         usuario: req.user.username,
         accion: 'DELETE',
         tabla_afectada: 'users',
-        registro_id: id,
+        registro_id: 0,
         sql_ejecutado: sqlExecuted,
         sql_rollback: sqlRollback,
         ip_cliente: ip,

@@ -1,0 +1,2013 @@
+openapi: 3.0.0
+info:
+  title: API Backend Parking Project
+  description: |-
+    Documentación de la API para el backend de Parking Project con autenticación JWT.
+    <br/>Está basada en la especificación OpenAPI 3.0. Puedes encontrar más información sobre
+    Swagger en [https://swagger.io](https://swagger.io).
+    <br/>Ahora puedes ayudarnos a mejorar la API ya sea haciendo cambios en la definición misma o en el código.
+    <br/>De esta manera, con el tiempo, podemos mejorar la API en general, y exponer algunas de las nuevas características en OAS3.
+
+    Algunos enlaces útiles:
+    - [The Parking Project repository](https://github.com/git-devtest/parking_project)
+    - [The source API definition for the Parking Project](https://github.com/git-devtest/parking_project/blob/main/swagger/swagger.yml)
+  version: 1.0.0
+  contact:
+    name: Parking Project
+    url: https://github.com/git-devtest/parking_project.git
+    email: parking-project@github.com
+    
+  license:
+    name: MIT License
+    url: https://github.com/git-devtest/parking_project/blob/main/LICENSE
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+  - url: https://api.parking-project.com
+    description: Servidor de producción
+
+# Configuración de seguridad JWT
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Ingresa el token JWT obtenido del endpoint de login
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: usuario
+        password:
+          type: string
+          format: password
+          example: password123
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [admin, operator]
+
+    UserIdResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            password:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [admin, operator]
+            isActive:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+      example:
+        "success": true
+        "data":
+          "id": "30e68280-e1b4-4f17-bc19-e9a12402c6de"
+          "username": "jeimy.rl"
+          "password": "$2b$10$pR8chnx2VBTZeXv7q3AeMOgFQDAFn25zjR7AmPBtf/PxMUO/kHMjO"
+          "email": "jeimy.rl@example.com"
+          "role": "OPERATOR"
+          "isActive": 1
+          "createdAt": "2025-11-15T23:34:24.000Z"
+    
+    CreateUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, operator]
+      example:
+        username: "jeimy.rl"
+        password: "jeimy123"
+        email: "jeimy.rl@example.com"
+        role: "OPERATOR"
+
+    CreateUserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [ADMIN, OPERATOR]
+      example:
+        "success": true
+        "message": "Usuario creado correctamente"
+        "data":
+          "id": "30e68280-e1b4-4f17-bc19-e9a12402c6de"
+          "username": "jeimy.rl"
+          "email": "jeimy.rl@example.com"
+          "role": "OPERATOR"
+
+    ChangePassword:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+      example:
+        currentPassword: "jeimy123"
+        newPassword: "jeimy123"
+    
+    ChangePasswordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [ADMIN, OPERATOR]
+      example:
+        "success": true
+        "message": "Contraseña cambiada correctamente"
+    
+    UpdateUserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [ADMIN, OPERATOR]
+      example:  
+        "success": true
+        "message": "Usuario actualizado correctamente"
+        "affectedRows": 1
+
+    DeleteUserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              enum: [ADMIN, OPERATOR]
+      example:
+        "success": true
+        "message": "Usuario inactivado correctamente"  
+    
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, operator]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: "30e68280-e1b4-4f17-bc19-e9a12402c6de"
+        username: "jeimy.rl"
+        email: "jeimy.rl@example.com"
+        role: "OPERATOR"
+        isActive: 1
+        createdAt: "2025-11-15T23:34:24.000Z"
+
+        id: "8433a5ea-c0f0-490d-8a2a-9993399ae0b0"
+        username: "admin"
+        email: "admin@parqueadero.com"
+        role: "ADMIN"
+        isActive: 1
+        createdAt: "2025-11-15T02:19:33.000Z"
+
+    Dashboard:
+      type: object
+      properties:
+        executiveSummary:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              dias_operativos:
+                type: integer
+              total_servicios:
+                type: integer
+              ingresos_totales:
+                type: number
+                format: double
+              ticket_promedio:
+                type: number
+                format: double
+              duracion_promedio_min:
+                type: number
+                format: double
+              horas_vendidas_totales:
+                type: number
+                format: double
+              vehiculos_unicos:
+                type: integer
+        revenueByVehicleType:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string 
+              vehicleType:
+                type: string
+              tipo_descripcion:
+                type: string
+              total_servicios:
+                type: integer
+              ingresos_totales:
+                type: number
+                format: double
+              ingreso_promedio:
+                type: number
+                format: double
+              porcentaje_ingresos:
+                type: number
+                format: double
+              duracion_promedio_min:
+                type: number
+                format: double
+        dailyRevenueTrend:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              fecha:
+                type: string
+                format: date
+              dia_semana:
+                type: string
+              servicios:
+                type: integer
+              ingresos:
+                type: number
+                format: double
+              duracion_promedio:
+                type: number
+                format: double
+              vehiculos_unicos:
+                type: integer
+        peakHours:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              hora:
+                type: string
+              total_ingresos:
+                type: number
+                format: double
+              ingresos_hora:
+                type: number
+                format: double
+              duracion_promedio:
+                type: number
+                format: double
+              autos:
+                type: integer
+              motos:
+                type: integer
+              camiones:
+                type: integer
+        currentOccupancy:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              vehicleType:
+                type: string
+              tipo_descripcion:
+                type: string
+              capacidad_maxima:
+                type: integer
+              espacios_ocupados:
+                type: integer
+              espacios_disponibles:
+                type: integer
+              porcentaje_ocupacion:
+                type: number
+                format: double
+              tarifa_hora:
+                type: number
+                format: double
+              tarifa_dia:
+                type: number
+                format: double
+        frequentCustomers:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              placa:
+                type: string
+              tipo_vehiculo:
+                type: string
+              numero_visitas:
+                type: integer
+              gasto_total:
+                type: number
+                format: double
+              gasto_promedio_visita:
+                type: number
+                format: double
+              duracion_promedio_min:
+                type: number
+                format: double
+              primera_visita:
+                type: string
+                format: date
+              ultima_visita:
+                type: string
+                format: date
+              dias_cliente:
+                type: integer
+        weeklyPattern:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              dia_semana:
+                type: string
+              num_dia:
+                type: integer
+              total_servicios:
+                type: integer
+              ingresos_totales:
+                type: number
+                format: double
+              ingreso_promedio:
+                type: number
+                format: double
+              duracion_promedio:
+                type: number
+                format: double
+        rotationRate:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              fecha:
+                type: string
+                format: date
+              vehicleType:
+                type: string
+              tipo_descripcion:
+                type: string
+              rotaciones:
+                type: integer
+              capacidad:
+                type: integer
+              tasa_rotacion_diaria:
+                type: number
+                format: double
+              ingresos_dia:
+                type: number
+                format: double
+        periodComparison:
+          type: array
+          items:
+            type: object
+            properties:
+              dataset_type:
+                type: string
+              vehicleType:
+                type: string
+              ingresos_periodo_actual:
+                type: number
+                format: double
+              ingresos_periodo_anterior:
+                type: number
+                format: double
+              servicio_periodo_actual:
+                type: integer
+              servicio_periodo_anterior:
+                type: integer
+        dateRange:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date
+            endDate:
+              type: string
+              format: date
+      example:
+        "success": true
+        "message": "Dashboard obtenido exitosamente"
+        "datasets": {
+          executiveSummary: [
+            {
+              "dataset_type": "executive_summary",
+              "dias_operativos": 9,
+              "total_servicios": 51,
+              "ingresos_totales": 2730.00,
+              "ticket_promedio": 53.529412,
+              "duracion_promedio_min": 229.1373,
+              "horas_vendidas_totales": 194.7667,
+              "vehiculos_unicos": 10,
+            } 
+          ],
+          revenueByVehicleType: [
+            {
+              "dataset_type": "revenue_by_vehicle_type",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "total_servicios": 21,
+              "ingresos_totales": 1400.00,
+              "ingreso_promedio": 66.666667,
+              "porcentaje_ingresos": 51.28,
+              "duracion_promedio_min": 259.1905,
+            },
+            {
+              "dataset_type": "revenue_by_vehicle_type",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "total_servicios": 13,
+              "ingresos_totales": 720.00,
+              "ingreso_promedio": 55.384615,
+              "porcentaje_ingresos": 26.37,
+              "duracion_promedio_min": 33.0769,
+            },
+            {
+              "dataset_type": "revenue_by_vehicle_type",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "total_servicios": 17,
+              "ingresos_totales": 610.00,
+              "ingreso_promedio": 35.882353,
+              "porcentaje_ingresos": 22.34,
+              "duracion_promedio_min": 341.9412,
+            }
+          ],
+          "dailyRevenueTrend": [
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-12-03T05:00:00.000Z",
+              "dia_semana": "Wednesday",
+              "servicios": 10,
+              "ingresos": 1050.00,
+              "duracion_promedio": 493.1000,
+              "vehiculos_unicos": 8,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-12-02T05:00:00.000Z",
+              "dia_semana": "Tuesday",
+              "servicios": 7,
+              "ingresos": 160.00,
+              "duracion_promedio": 7.7143,
+              "vehiculos_unicos": 6,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-28T05:00:00.000Z",
+              "dia_semana": "Friday",
+              "servicios": 8,
+              "ingresos": 630.00,
+              "duracion_promedio": 707.8750,
+              "vehiculos_unicos": 4,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-27T05:00:00.000Z",
+              "dia_semana": "Thursday",
+              "servicios": 3,
+              "ingresos": 230.00,
+              "duracion_promedio": 163.6667,
+              "vehiculos_unicos": 3,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-26T05:00:00.000Z",
+              "dia_semana": "Wednesday",
+              "servicios": 5,
+              "ingresos": 100.00,
+              "duracion_promedio": 3.0000,
+              "vehiculos_unicos": 4,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-24T05:00:00.000Z",
+              "dia_semana": "Monday",
+              "servicios": 2,
+              "ingresos": 30.00,
+              "duracion_promedio": 24.5000,
+              "vehiculos_unicos": 2,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-18T05:00:00.000Z",
+              "dia_semana": "Tuesday",
+              "servicios": 1,
+              "ingresos": 20.00,
+              "duracion_promedio": 2.0000,
+              "vehiculos_unicos": 1,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-16T05:00:00.000Z",
+              "dia_semana": "Sunday",
+              "servicios": 1,
+              "ingresos": 10.00,
+              "duracion_promedio": 13.0000,
+              "vehiculos_unicos": 1,
+            },
+            {
+              "dataset_type": "daily_revenue_trend",
+              "fecha": "2025-11-14T05:00:00.000Z",
+              "dia_semana": "Friday",
+              "servicios": 14,
+              "ingresos": 500.00,
+              "duracion_promedio": 33.4286,
+              "vehiculos_unicos": 6,
+            }
+          ],
+          "peakHours": [
+            {
+              "dataset_type": "peak_hours",
+              "hora": 22,
+              "total_ingresos": 10,
+              "ingresos_hora": 370.00,
+              "duracion_promedio": 41.6000,
+              "autos": 3,
+              "motos": 4,
+              "camiones": 3,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 17,
+              "total_ingresos": 8,
+              "ingresos_hora": 180.00,
+              "duracion_promedio": 7.5000,
+              "autos": 4,
+              "motos": 2,
+              "camiones": 2,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 21,
+              "total_ingresos": 7,
+              "ingresos_hora": 160.00,
+              "duracion_promedio": 9.1429,
+              "autos": 3,
+              "motos": 2,
+              "camiones": 2,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 13,
+              "total_ingresos": 6,
+              "ingresos_hora": 1070.00,
+              "duracion_promedio": 867.6667,
+              "autos": 4,
+              "motos": 1,
+              "camiones": 1,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 10,
+              "total_ingresos": 5,
+              "ingresos_hora": 160.00,
+              "duracion_promedio": 40.8000,
+              "autos": 1,
+              "motos": 3,
+              "camiones": 1,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 15,
+              "total_ingresos": 5,
+              "ingresos_hora": 190.00,
+              "duracion_promedio": 63.2000,
+              "autos": 1,
+              "motos": 2,
+              "camiones": 2,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 23,
+              "total_ingresos": 4,
+              "ingresos_hora": 90.00,
+              "duracion_promedio": 14.0000,
+              "autos": 2,
+              "motos": 1,
+              "camiones": 1,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 0,
+              "total_ingresos": 2,
+              "ingresos_hora": 50.00,
+              "duracion_promedio": 5.0000,
+              "autos": 0,
+              "motos": 1,
+              "camiones": 1,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 19,
+              "total_ingresos": 1,
+              "ingresos_hora": 400.00,
+              "duracion_promedio": 5339.0000,
+              "autos": 0,
+              "motos": 1,
+              "camiones": 0,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 9,
+              "total_ingresos": 1,
+              "ingresos_hora": 20.00,
+              "duracion_promedio": 4.0000,
+              "autos": 1,
+              "motos": 0,
+              "camiones": 0,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 18,
+              "total_ingresos": 1,
+              "ingresos_hora": 20.00,
+              "duracion_promedio": 9.0000,
+              "autos": 1,
+              "motos": 0,
+              "camiones": 0,
+            },
+            {
+              "dataset_type": "peak_hours",
+              "hora": 16,
+              "total_ingresos": 1,
+              "ingresos_hora": 20.00,
+              "duracion_promedio": 2.0000,
+              "autos": 1,
+              "motos": 0,
+              "camiones": 0,
+            }
+          ],
+          "currentOccupancy": [
+            {
+              "dataset_type": "current_occupancy",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "capacidad_maxima": 50,
+              "espacios_ocupados": 0,
+              "espacios_disponibles": 50,
+              "porcentaje_ocupacion": 0.00,
+              "tarifa_hora": 20.00,
+              "tarifa_dia": 200.00,
+            },
+            {
+              "dataset_type": "current_occupancy",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "capacidad_maxima": 30,
+              "espacios_ocupados": 0,
+              "espacios_disponibles": 30,
+              "porcentaje_ocupacion": 0.00,
+              "tarifa_hora": 10.00,
+              "tarifa_dia": 100.00,
+            },
+            {
+              "dataset_type": "current_occupancy",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "capacidad_maxima": 10,
+              "espacios_ocupados": 0,
+              "espacios_disponibles": 10,
+              "porcentaje_ocupacion": 0.00,
+              "tarifa_hora": 40.00,
+              "tarifa_dia": 400.00,
+            }
+          ],
+          "frequentCustomers": [
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "FTY18F",
+              "tipo_vehiculo": "MOTORCYCLE",
+              "numero_visitas": 12,
+              "gasto_total": 530.00,
+              "gasto_promedio_visita": 44.166667,
+              "duracion_promedio_min": 467.0833,
+              "primera_visita": "2025-11-15T03:02:37.000Z",
+              "ultima_visita": "2025-12-03T18:29:44.000Z",
+              "dias_cliente": 19,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "ABC123",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 7,
+              "gasto_total": 160.00,
+              "gasto_promedio_visita": 22.857143,
+              "duracion_promedio_min": 19.0000,
+              "primera_visita": "2025-11-15T02:51:24.000Z",
+              "ultima_visita": "2025-12-02T21:15:01.000Z",
+              "dias_cliente": 18,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "JHK150",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 4,
+              "gasto_total": 260.00,
+              "gasto_promedio_visita": 65.000000,
+              "duracion_promedio_min": 143.0000,
+              "primera_visita": "2025-11-27T04:20:48.000Z",
+              "ultima_visita": "2025-12-03T15:45:14.000Z",
+              "dias_cliente": 7,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "JHK150",
+              "tipo_vehiculo": "TRUCK",
+              "numero_visitas": 4,
+              "gasto_total": 200.00,
+              "gasto_promedio_visita": 50.000000,
+              "duracion_promedio_min": 25.5000,
+              "primera_visita": "2025-11-15T02:58:01.000Z",
+              "ultima_visita": "2025-11-28T22:41:17.000Z",
+              "dias_cliente": 14,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "OVF546",
+              "tipo_vehiculo": "TRUCK",
+              "numero_visitas": 2,
+              "gasto_total": 160.00,
+              "gasto_promedio_visita": 80.000000,
+              "duracion_promedio_min": 81.0000,
+              "primera_visita": "2025-11-15T03:02:28.000Z",
+              "ultima_visita": "2025-11-28T20:37:45.000Z",
+              "dias_cliente": 14,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "ABC123",
+              "tipo_vehiculo": "TRUCK",
+              "numero_visitas": 2,
+              "gasto_total": 80.00,
+              "gasto_promedio_visita": 40.000000,
+              "duracion_promedio_min": 2.5000,
+              "primera_visita": "2025-11-27T05:36:05.000Z",
+              "ultima_visita": "2025-12-02T20:58:00.000Z",
+              "dias_cliente": 5,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "TEST123",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 2,
+              "gasto_total": 40.00,
+              "gasto_promedio_visita": 20.000000,
+              "duracion_promedio_min": 2.0000,
+              "primera_visita": "2025-11-27T03:49:32.000Z",
+              "ultima_visita": "2025-11-27T04:03:09.000Z",
+              "dias_cliente": 0,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "OVF546",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 2,
+              "gasto_total": 40.00,
+              "gasto_promedio_visita": 20.000000,
+              "duracion_promedio_min": 2.0000,
+              "primera_visita": "2025-11-27T03:40:21.000Z",
+              "ultima_visita": "2025-12-03T18:30:30.000Z",
+              "dias_cliente": 7,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "TEST789",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 2,
+              "gasto_total": 40.00,
+              "gasto_promedio_visita": 20.000000,
+              "duracion_promedio_min": 3.0000,
+              "primera_visita": "2025-11-15T02:57:45.000Z",
+              "ultima_visita": "2025-12-03T14:06:49.000Z",
+              "dias_cliente": 19,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "TEST999",
+              "tipo_vehiculo": "CAR",
+              "numero_visitas": 2,
+              "gasto_total": 40.00,
+              "gasto_promedio_visita": 20.000000,
+              "duracion_promedio_min": 2.0000,
+              "primera_visita": "2025-11-15T02:57:49.000Z",
+              "ultima_visita": "2025-12-02T22:44:43.000Z",
+              "dias_cliente": 18,
+            },
+            {
+              "dataset_type": "frequent_customers",
+              "placa": "OV546F",
+              "tipo_vehiculo": "MOTORCYCLE",
+              "numero_visitas": 2,
+              "gasto_total": 30.00,
+              "gasto_promedio_visita": 15.000000,
+              "duracion_promedio_min": 36.0000,
+              "primera_visita": "2025-12-02T20:36:26.000Z",
+              "ultima_visita": "2025-12-03T15:45:55.000Z",
+              "dias_cliente": 1,
+            }
+          ],
+          "weeklyPattern": [
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Sunday",
+              "num_dia": 1,
+              "total_servicios": 1,
+              "ingresos_totales": 10.00,
+              "ingreso_promedio": 10.000000,
+              "duracion_promedio": 13.0000,
+            },
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Monday",
+              "num_dia": 2,
+              "total_servicios": 2,
+              "ingresos_totales": 30.00,
+              "ingreso_promedio": 15.000000,
+              "duracion_promedio": 24.5000,
+            },
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Tuesday",
+              "num_dia": 3,
+              "total_servicios": 8,
+              "ingresos_totales": 180.00,
+              "ingreso_promedio": 22.500000,
+              "duracion_promedio": 7.0000,
+            },
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Wednesday",
+              "num_dia": 4,
+              "total_servicios": 15,
+              "ingresos_totales": 1150.00,
+              "ingreso_promedio": 76.666667,
+              "duracion_promedio": 329.7333,
+            },
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Thursday",
+              "num_dia": 5,
+              "total_servicios": 3,
+              "ingresos_totales": 230.00,
+              "ingreso_promedio": 76.666667,
+              "duracion_promedio": 163.6667,
+            },
+            {
+              "dataset_type": "weekly_pattern",
+              "dia_semana": "Friday",
+              "num_dia": 6,
+              "total_servicios": 22,
+              "ingresos_totales": 1130.00,
+              "ingreso_promedio": 51.363636,
+              "duracion_promedio": 278.6818,
+            }
+          ],
+          "rotationRate": [
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-03T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 4,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.08,
+              "ingresos_dia": 880.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-03T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 4,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.13,
+              "ingresos_dia": 50.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-03T05:00:00.000Z",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "rotaciones": 2,
+              "capacidad": 10,
+              "tasa_rotacion_diaria": 0.20,
+              "ingresos_dia": 120.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-02T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 3,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.06,
+              "ingresos_dia": 60.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-02T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 2,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.07,
+              "ingresos_dia": 20.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-12-02T05:00:00.000Z",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "rotaciones": 2,
+              "capacidad": 10,
+              "tasa_rotacion_diaria": 0.20,
+              "ingresos_dia": 80.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-28T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 3,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.06,
+              "ingresos_dia": 80.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-28T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 3,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.10,
+              "ingresos_dia": 430.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-28T05:00:00.000Z",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "rotaciones": 2,
+              "capacidad": 10,
+              "tasa_rotacion_diaria": 0.20,
+              "ingresos_dia": 120.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-27T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 1,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.02,
+              "ingresos_dia": 180.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-27T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 1,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.03,
+              "ingresos_dia": 10.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-27T05:00:00.000Z",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "rotaciones": 1,
+              "capacidad": 10,
+              "tasa_rotacion_diaria": 0.10,
+              "ingresos_dia": 40.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-26T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 5,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.10,
+              "ingresos_dia": 100.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-24T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 1,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.02,
+              "ingresos_dia": 20.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-24T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 1,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.03,
+              "ingresos_dia": 10.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-18T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 1,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.02,
+              "ingresos_dia": 20.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-16T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 1,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.03,
+              "ingresos_dia": 10.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-14T05:00:00.000Z",
+              "vehicleType": "CAR",
+              "tipo_descripcion": "Automóvil",
+              "rotaciones": 3,
+              "capacidad": 50,
+              "tasa_rotacion_diaria": 0.06,
+              "ingresos_dia": 60.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-14T05:00:00.000Z",
+              "vehicleType": "MOTORCYCLE",
+              "tipo_descripcion": "Motocicleta",
+              "rotaciones": 5,
+              "capacidad": 30,
+              "tasa_rotacion_diaria": 0.17,
+              "ingresos_dia": 80.00,
+            },
+            {
+              "dataset_type": "rotation_rate",
+              "fecha": "2025-11-14T05:00:00.000Z",
+              "vehicleType": "TRUCK",
+              "tipo_descripcion": "Camión",
+              "rotaciones": 6,
+              "capacidad": 10,
+              "tasa_rotacion_diaria": 0.60,
+              "ingresos_dia": 360.00,
+            }
+          ],
+          "periodComparison": [
+            {
+              "dataset_type": "period_comparison",
+              "vehicleType": "CAR",
+              "ingresos_periodo_actual": 1400.00,
+              "ingresos_periodo_anterior": 0.00,
+              "servicios_actual": 21,
+              "servicios_anterior": 0,
+            },
+            {
+              "dataset_type": "period_comparison",
+              "vehicleType": "MOTORCYCLE",
+              "ingresos_periodo_actual": 610.00,
+              "ingresos_periodo_anterior": 0.00,
+              "servicios_actual": 17,
+              "servicios_anterior": 0,
+            },
+            {
+              "dataset_type": "period_comparison",
+              "vehicleType": "TRUCK",
+              "ingresos_periodo_actual": 720.00,
+              "ingresos_periodo_anterior": 0.00,
+              "servicios_actual": 13,
+              "servicios_anterior": 0,
+            }
+          ],
+          "dateRange": {
+              "startDate": "2025-11-10",
+              "endDate": "2025-12-10",
+          }
+        }
+      
+    CurrentOccupancy:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        datasets:
+          type: object
+          properties:
+            vehicleType:
+              type: string
+              tipo_descripcion:
+                type: string
+              maxCapacity:
+                type: integer
+              currentCount:
+                type: integer
+              availableSpaces:
+                type: integer
+              occupancyPercentage:
+                type: number
+                format: float
+      example:
+        "success": true
+        "message": "Ocupación en tiempo real obtenida exitosamente"
+        "datasets": [
+            {
+                "vehicleType": "CAR",
+                "tipo_descripcion": "Automóvil",
+                "maxCapacity": 50,
+                "currentCount": 0,
+                "availableSpaces": 50,
+                "occupancyPercentage": 0.00,
+            }
+        ]
+
+    CurrentlyParked:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        datasets:
+          type: object
+          properties:
+            plateNumber:
+              type: string
+            vehicleType:
+              type: string
+            entryTime:
+              type: string
+              format: date-time
+            minutes_parked:
+              type: integer
+            vehicle_type_description:
+              type: string
+            hours_parked:
+              type: number
+              format: float
+      example:
+        "success": true,
+        "message": "Vehículos actualmente estacionados obtenidos exitosamente"
+        "datasets": [
+          {
+            "plateNumber": "ABC123",
+            "vehicleType": "TRUCK",
+            "entryTime": "2025-12-10T20:35:45.000Z",
+            "minutes_parked": 0,
+            "vehicle_type_description": "Camión",
+            "hours_parked": 0.00,
+          }
+        ]
+    
+    ReportDashboard:
+      type: object
+      properties:
+        success:
+          type: boolean
+        datasets:
+          type: object
+          properties:
+            parkedVehicles:
+              type: array
+              items:
+                type: object
+                properties:
+                  vehicleType:
+                    type: string
+                  count:
+                    type: integer
+            todayIncome:
+              type: number
+              format: float
+            todayVehicles:
+              type: integer
+            capacity:
+              type: array
+              items:
+                type: object
+                properties:
+                  vehicleType:
+                    type: string
+                  vehicle_type_description:
+                    type: string
+                  maxCapacity:
+                    type: integer
+                  currentCount:
+                    type: integer
+                  availableSpaces:
+                    type: integer
+      example:
+        "success": true,
+        "datasets": {
+          "parkedVehicles": [
+            {
+              "vehicleType": "TRUCK",
+              "count": 1,
+            }
+          ],
+          "todayIncome": "0.00",
+          "todayVehicles": 0,
+          "capacity": [
+            {
+              "vehicleType": "CAR",
+              "vehicle_type_description": "Automóvil",
+              "maxCapacity": 50,
+              "currentCount": 0,
+              "availableSpaces": 50,
+            },
+            {
+              "vehicleType": "MOTORCYCLE",
+              "vehicle_type_description": "Motocicleta",
+              "maxCapacity": 30,
+              "currentCount": 0,
+              "availableSpaces": 30,
+            },
+            {
+              "vehicleType": "TRUCK",
+              "vehicle_type_description": "Camión",
+              "maxCapacity": 10,
+              "currentCount": 1,
+              "availableSpaces": 9,
+            }
+          ]
+        }
+          
+    ParkedVehicles:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              plateNumber:
+                type: string
+              vehicleType:
+                type: string
+              entryTime:
+                type: string
+                format: date-time
+              minutes_parked:
+                type: integer
+              vehicle_type_description:
+                type: string
+        count:
+          type: integer
+      example:
+        "success": true,
+        "data": [
+          {
+            "plateNumber": "ABC123",
+            "vehicleType": "TRUCK",
+            "entryTime": "2025-12-10T20:35:45.000Z",
+            "minutes_parked": 42,
+            "vehicle_type_description": "Camión",
+          }
+        ]
+        "count": 1      
+
+    ParkingCapacity:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              vehicleType:
+                type: string
+              vehicle_type_description:
+                type: string
+              maxCapacity:
+                type: integer
+              currentCount:
+                type: integer
+              availableSpaces:
+                type: integer
+      example:
+        "success": true,
+        "data": [
+          {
+            "vehicleType": "CAR",
+            "vehicle_type_description": "Automóvil",
+            "maxCapacity": 50,
+            "currentCount": 0,
+            "availableSpaces": 50,
+          },
+          {
+            "vehicleType": "MOTORCYCLE",
+            "vehicle_type_description": "Motocicleta",
+            "maxCapacity": 30,
+            "currentCount": 0,
+            "availableSpaces": 30,
+          },
+          {
+            "vehicleType": "TRUCK",
+            "vehicle_type_description": "Camión",
+            "maxCapacity": 10,
+            "currentCount": 1,
+            "availableSpaces": 9,
+          }
+        ]
+
+    VehicleHistory:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              plateNumber:
+                type: string
+              vehicleType:
+                type: string
+              vehicle_type_description:
+                type: string
+              entryTime:
+                type: string
+                format: date-time
+              exitTime:
+                type: string
+                format: date-time
+              duration:
+                type: integer
+              amount:
+                type: number
+                format: float
+              status:
+                type: string
+              status_description:
+                type: string
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+            total:
+              type: integer
+            pages:
+              type: integer
+      example:
+        "success": true,
+        "data": [
+            {
+                "plateNumber": "FTY18F",
+                "vehicleType": "MOTORCYCLE",
+                "vehicle_type_description": "Motocicleta",
+                "entryTime": "2025-12-03T15:16:26.000Z",
+                "exitTime": "2025-12-03T15:18:26.000Z",
+                "duration": 2,
+                "amount": 10.00,
+                "status": "COMPLETED",
+                "status_description": "Completada",
+            }
+        ]        
+        "pagination": {
+            "page": 1,
+            "limit": 10,
+            "total": 52,
+            "pages": 6,
+        }
+
+# Rutas de autenticación
+paths:
+  # Iniciar sesión
+  /api/auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Endpoint para autenticar usuarios y obtener un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+ 
+  # Endpoints de usuarios (Todos los usuarios y Crear usuario)
+  /api/users:
+    # Listar usuarios (solo ADMIN)
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener todos los usuarios
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    # Crear usuario (solo ADMIN)
+    post:
+        tags:
+          - Usuarios
+        summary: Crear usuario
+        description: Endpoint protegido - requiere autenticación (solo ADMIN)
+        security:
+          - BearerAuth: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUser'
+        responses:
+          '201':
+            description: Usuario creado exitosamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CreateUserResponse'
+          '401':
+            description: No autorizado
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '403':
+            description: Acceso denegado
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '409':
+            description: Usuario ya existe
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+  
+  # Cambiar contraseña (solo autenticado, propio usuario)
+  /api/users/change-password:
+    put:
+      tags:
+        - Usuarios
+      summary: Cambiar contraseña
+      description: Endpoint protegido - requiere autenticación (cualquier rol autenticado)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+      responses:
+        '200':
+          description: Contraseña cambiada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePasswordResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  # Endpoints de usuarios (Listar usuario por ID)
+  /api/users/{id}:
+    # Obtener usuario por ID (solo ADMIN)
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener usuario por ID
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserIdResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    # Actualizar usuario (solo ADMIN)
+    put:
+      tags:
+        - Usuarios
+      summary: Actualizar usuario
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+  
+    # Eliminar usuario (Soft Delete), cambia de estado (Activo/Inactivo) (solo ADMIN)
+    delete:
+      tags:
+        - Usuarios
+      summary: Eliminar usuario (Soft Delete), cambia de estado (Activo/Inactivo)
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUserResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+  
+  # Verificar estado del servidor
+  /health:
+    get:
+      tags:
+        - Estado
+      summary: Verificar estado del servidor
+      responses:
+        '200':
+          description: Servidor funcionando correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Servicio funcionando correctamente"
+                  timestamp:
+                    type: string
+                    example: "2023-01-01T00:00:00.000Z"
+                  environment:
+                    type: string
+                    example: "development"
+
+  # Rutas de Admin
+  # Dashboard completo
+  /api/insights/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Dashboard para análisis administrativo
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dashboard completo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Current Occupancy
+  /api/insights/occupancy/current:
+    get:
+      tags:
+        - Admin
+      summary: Ocupación actual del parquadero
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current Occupancy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentOccupancy'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Currently Parked
+  /api/insights/vehicles/currently-parked:
+    get:
+      tags:
+        - Admin
+      summary: Vahículos parqueados actualmente
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Currently Parked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentlyParked'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Dashboard de reportes completo
+  /api/reports/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Dashboard de reportes completo
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dashboard de reportes completo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportDashboard'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Vehículos parqueados
+  /api/vehicles/parked:
+    get:
+      tags:
+        - Admin
+      summary: Vehículos parqueados
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Vehículos parqueados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkedVehicles'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Capacidad del parqueadero
+  /api/vehicles/capacity:
+    get:
+      tags:
+        - Admin
+      summary: Capacidad del parqueadero
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Capacidad del parqueadero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingCapacity'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Historial de vehículos
+  /api/vehicles/history:
+    get:
+      tags:
+        - Admin
+      summary: Historial de vehículos
+      description: Endpoint protegido - requiere autenticación (solo ADMIN)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Historial de vehículos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleHistory'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# Tags
+tags:
+  - name: Autenticación
+    description: Endpoints de autenticación y registro
+  - name: Usuarios
+    description: Gestión de usuarios (requiere autenticación, algunos endpoints requieren ADMIN)
+  - name: Admin
+    description: Endpoints administrativos (requiere autenticación, solo ADMIN)

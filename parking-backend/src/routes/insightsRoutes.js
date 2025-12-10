@@ -1,4 +1,3 @@
-// routes/insightsRoutes.js
 const express = require('express');
 const router = express.Router();
 const insightsController = require('../controllers/insightsController');

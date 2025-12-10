@@ -1,9 +1,21 @@
 const { pool } = require('../config/database');
 const bcrypt = require('bcryptjs');
 
+/**
+ * @description Modelo de usuario
+ * @module User
+ */
 class User {
   
-  // Crear usuario
+  /**
+   * @description Crear usuario
+   * @param {Object} data - Datos del usuario
+   * @param {string} data.id - ID del usuario
+   * @param {string} data.username - Nombre de usuario
+   * @param {string} data.password - Contraseña
+   * @param {string} data.email - Correo electrónico
+   * @param {string} data.role - Rol del usuario
+   */
   static async create({ id, username, password, email, role = 'OPERATOR' }) {
     
     await pool.query(
@@ -16,7 +28,10 @@ class User {
     return this.findById(id);
   }
 
-  // Buscar por username (para login)
+  /**
+   * @description Buscar por username (para login)
+   * @param {string} username - Nombre de usuario
+   */
   static async findByUsername(username) {
     const [rows] = await pool.query(
       `SELECT id, username, password, email, role, isActive, createdAt
@@ -27,7 +42,10 @@ class User {
     return rows[0];
   }
 
-  // Buscar por ID
+  /**
+   * @description Buscar por ID
+   * @param {string} id - ID del usuario
+   */
   static async findById(id) {
     if (!id) {
       throw new Error("User ID is required");
@@ -42,7 +60,11 @@ class User {
     return rows[0];
   }
 
-  // Listar usuarios (con paginación opcional)
+  /**
+   * @description Listar usuarios (con paginación opcional)
+   * @param {number} limit - Límite de resultados
+   * @param {number} offset - Desplazamiento
+   */
   static async getAll(limit = 20, offset = 0) {
     const [rows] = await pool.query(
       `SELECT id, username, email, role, isActive, createdAt
@@ -53,7 +75,9 @@ class User {
     return rows;
   }
 
-  // Total usuarios para paginación
+  /**
+   * @description Total usuarios para paginación
+   */
   static async count() {
     const [rows] = await pool.query(
       `SELECT COUNT(*) AS total FROM users WHERE isActive = TRUE`
@@ -61,7 +85,11 @@ class User {
     return rows[0].total;
   }
 
-  // Actualizar usuario
+  /**
+   * @description Actualizar usuario
+   * @param {string} id - ID del usuario
+   * @param {Object} data - Datos del usuario
+   */
   static async update(id, data) {
     const fields = [];
     const values = [];
@@ -89,7 +117,10 @@ class User {
     return this.findById(id);
   }
 
-  // Soft delete (inactivar)
+  /**
+   * @description Soft delete (inactivar)
+   * @param {string} id - ID del usuario
+   */
   static async delete(id) {
     await pool.query(
       `UPDATE users SET isActive = FALSE WHERE id = ?`,
@@ -98,7 +129,12 @@ class User {
     return true;
   } 
 
-  // Cambiar contraseña
+  /**
+   * @description Cambiar contraseña
+   * @param {string} id - ID del usuario
+   * @param {string} currentPassword - Contraseña actual
+   * @param {string} newPassword - Nueva contraseña
+   */
   static async changePassword(id, currentPassword, newPassword) {
     const user = await this.findById(id);
     if (!user) {
@@ -120,4 +156,8 @@ class User {
 
 }
 
+/**
+ * @description Exportar modelo
+ * @module User
+ */
 module.exports = User;

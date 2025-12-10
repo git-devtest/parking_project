@@ -1,6 +1,9 @@
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
-// Función para obtener información sobre la base de datos
+
+/**
+ * @description Función para obtener información sobre la base de datos
+ */
 const getDatabaseInfo = async () => {
   let connection;
   try {
@@ -21,4 +24,8 @@ const getDatabaseInfo = async () => {
   }    
 };
 
+/**
+ * @description Exportar servicios
+ * @module aboutService
+ */
 module.exports = { getDatabaseInfo };

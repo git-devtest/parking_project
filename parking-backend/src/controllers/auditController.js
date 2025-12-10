@@ -1,8 +1,17 @@
 const auditService = require('../services/auditService');
 const logger = require('../utils/logger');
 
+/**
+ * @description Controlador para obtener los logs de auditoría basados en el rango especificado
+ * @module AuditController
+ */
 class AuditController {
-    // Controlador para obtener los logs de auditoría basados en el rango especificado
+    /**
+     * @description Controlador para obtener los logs de auditoría basados en el rango especificado
+     * @module getAuditLogsDaily
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async getAuditLogsDaily(req, res) {
         try {
             const { range = 'today' } = req.query;
@@ -16,7 +25,12 @@ class AuditController {
         }
     }
 
-    // Controlador para obtener los logs de auditoría con paginación
+    /**
+     * @description Controlador para obtener los logs de auditoría con paginación
+     * @module getAuditLogs
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async getAuditLogs(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -32,8 +46,12 @@ class AuditController {
         }
     }
 
-
-    // Controlador para obtener los logs de auditoría basados en un rango de fechas personalizado
+    /**
+     * @description Controlador para obtener los logs de auditoría basados en un rango de fechas personalizado
+     * @module getAuditLogCustom
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async getAuditLogCustom(req, res) {
         try {
             const { startDate, endDate } = req.query;
@@ -54,4 +72,8 @@ class AuditController {
     }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new AuditController();

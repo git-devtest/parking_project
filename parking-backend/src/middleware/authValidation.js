@@ -1,5 +1,12 @@
 const { body } = require('express-validator');
 
+/**
+ * @description Validación de inicio de sesión
+ * @module loginValidation
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función siguiente
+ */
 const loginValidation = [
   body('username')
     .notEmpty()
@@ -14,6 +21,13 @@ const loginValidation = [
     .withMessage('La contraseña debe tener al menos 6 caracteres')
 ];
 
+/**
+ * @description Validación de registro
+ * @module registerValidation
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función siguiente
+ */
 const registerValidation = [
   body('username')
     .notEmpty()
@@ -40,4 +54,8 @@ const registerValidation = [
     .withMessage('El rol debe ser ADMIN u OPERATOR')
 ];
 
+/**
+ * @description Exportar validaciones
+ * @module exportValidations
+ */
 module.exports = { loginValidation, registerValidation };

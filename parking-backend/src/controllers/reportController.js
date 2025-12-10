@@ -1,6 +1,17 @@
 const reportService = require('../services/reportService');
 
+/**
+ * @description Controlador para generar reportes
+ * @module ReportController
+ */
 class ReportController {
+
+  /**
+   * @description Obtiene el reporte diario
+   * @module getDailyReport
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getDailyReport(req, res, next) {
     try {
       const { range = 'today' } = req.query;
@@ -13,6 +24,12 @@ class ReportController {
     }
   }
 
+  /**
+   * @description Obtiene los datos del dashboard
+   * @module getDashboardData
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getDashboardData(req, res, next) {
     try {
       const result = await reportService.getDashboardData();
@@ -23,6 +40,12 @@ class ReportController {
     }
   }
 
+  /**
+   * @description Obtiene el reporte personalizado
+   * @module getCustomReport
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getCustomReport(req, res, next) {
     try {
       const { startDate, endDate } = req.query;
@@ -43,4 +66,8 @@ class ReportController {
   }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new ReportController();

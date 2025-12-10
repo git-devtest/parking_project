@@ -4,16 +4,32 @@ const authController = require('../controllers/authController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { loginValidation, registerValidation } = require('../middleware/authValidation');
 
-// Login
+/**
+ * @description Login
+ * @route POST /login
+ */
 router.post('/login', loginValidation, authController.login);
 
-// Obtener perfil (protegido)
+/**
+ * @description Obtener perfil (protegido)
+ * @route GET /me
+ */
 router.get('/me', authenticateToken, authController.getProfile);
 
-// Registrar usuario (solo admin)
+/**
+ * @description Registrar usuario (solo admin)
+ * @route POST /register
+ */
 router.post('/register', authenticateToken, requireRole(['ADMIN']), registerValidation, authController.register);
 
-// Obtener usuarios (solo admin)
+/**
+ * @description Obtener usuarios (solo admin)
+ * @route GET /users
+ */
 router.get('/users', authenticateToken, requireRole(['ADMIN']), authController.getUsers);
 
+/**
+ * @description Exportar rutas
+ * @module authRoutes
+ */
 module.exports = router;

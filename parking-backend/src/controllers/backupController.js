@@ -12,11 +12,18 @@ if (!fs.existsSync(BACKUP_DIR)) {
     fs.mkdirSync(BACKUP_DIR, { recursive: true });
 }
 
+/**
+ * @description Controlador para manejar operaciones de backup
+ * @module BackupController
+ */
 class BackupController {
 
-    // ==================================================
-    // 1. CREAR BACKUP EN JSON
-    // ==================================================
+    /**
+     * @description Controlador para crear un backup en formato JSON
+     * @module createBackup
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async createBackup(req, res) {
         let connection;
 
@@ -105,9 +112,12 @@ class BackupController {
         }
     }
 
-    // ==================================================
-    // 2. LISTAR BACKUPS
-    // ==================================================
+    /**
+     * @description Controlador para listar los backups disponibles
+     * @module listBackups
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async listBackups(req, res) {
         try {
             const backupDirs = [
@@ -163,9 +173,12 @@ class BackupController {
         }
     }
 
-    // ==================================================
-    // 3. DESCARGAR BACKUP
-    // ==================================================
+    /**
+     * @description Controlador para descargar un backup
+     * @module downloadBackup
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async downloadBackup(req, res) {
         try {
             const fileName = req.params.file;
@@ -225,9 +238,12 @@ class BackupController {
         }
     }
 
-    // ==================================================
-    // 4. CREAR BACKUP EN SQL
-    // ==================================================
+    /**
+     * @description Controlador para crear un backup en formato SQL
+     * @module createSqlBackup
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async createSqlBackup(req, res) {
         try {
             const start = Date.now();
@@ -265,9 +281,12 @@ class BackupController {
         }
     }
 
-    // ==================================================
-    // 5. VER CONTENIDO JSON
-    // ==================================================
+    /**
+     * @description Controlador para visualizar el contenido de un backup JSON
+     * @module viewJsonBackup
+     * @param {Object} req - Objeto de solicitud
+     * @param {Object} res - Objeto de respuesta
+     */
     async viewJsonBackup(req, res) {
         try {
             const fileName = req.params.file;
@@ -335,7 +354,10 @@ class BackupController {
 
 }
 
-
+/**
+ * @description Obtiene la fecha y hora local en formato YYYY-MM-DD_HH-MM-SS
+ * @returns {string} Fecha y hora local en formato YYYY-MM-DD_HH-MM-SS
+ */
 function getLocalTimestamp() {
     const now = new Date();
     const date = now.toLocaleDateString('es-ES').replace(/\//g, '-');
@@ -344,6 +366,11 @@ function getLocalTimestamp() {
     return `${date}_${time}`;
 }
 
+/**
+ * @description Obtiene la dirección IP del cliente
+ * @param {Object} req - Objeto de solicitud
+ * @returns {string} Dirección IP del cliente
+ */
 function getClientIp(req) {
     let ip = req.headers['x-forwarded-for']?.split(',')[0] ||
              req.connection?.remoteAddress ||
@@ -359,4 +386,8 @@ function getClientIp(req) {
     return ip;
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new BackupController();

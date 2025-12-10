@@ -1,7 +1,17 @@
 const vehicleService = require('../services/vehicleService');
-const logger = require('../utils/logger');
 
+/**
+ * @description Controlador para vehículos
+ * @module VehicleController
+ */
 class VehicleController {
+
+  /**
+   * @description Registra la entrada de un vehículo
+   * @module registerEntry
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async registerEntry(req, res, next) {
     try {
       const { plateNumber, vehicleType } = req.body;
@@ -14,6 +24,12 @@ class VehicleController {
     }
   }
 
+  /**
+   * @description Registra la salida de un vehículo
+   * @module registerExit
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async registerExit(req, res, next) {
     try {
       const { plateNumber } = req.body;
@@ -38,6 +54,12 @@ class VehicleController {
   }
   }
 
+  /**
+   * @description Obtiene los vehículos estacionados
+   * @module getParkedVehicles
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getParkedVehicles(req, res, next) {
     try {
       const result = await vehicleService.getParkedVehicles();
@@ -48,6 +70,12 @@ class VehicleController {
     }
   }
 
+  /**
+   * @description Obtiene la capacidad del parqueadero
+   * @module getParkingCapacity
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getParkingCapacity(req, res, next) {
     try {
       const result = await vehicleService.getParkingCapacity();
@@ -58,6 +86,12 @@ class VehicleController {
     }
   }
 
+  /**
+   * @description Obtiene el historial de vehículos
+   * @module getVehicleHistory
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getVehicleHistory(req, res, next) {
     try {
       const { page = 1, limit = 20, searchPlate = '' } = req.query;
@@ -71,4 +105,8 @@ class VehicleController {
   }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new VehicleController();

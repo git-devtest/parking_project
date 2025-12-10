@@ -3,6 +3,9 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 
+/**
+ * @description Servicio de tickets
+ */
 class TicketService {
   
   /**
@@ -148,6 +151,11 @@ class TicketService {
     }
   }
 
+  /**
+   * @description Obtener el último ticket por placa
+   * @param {string} plateNumber - Placa del vehículo
+   * @returns {Promise<{success: boolean, data: Array}>} - Último ticket
+   */
   async getLastTicketByPlate(plateNumber) {
     const connection = await pool.getConnection();
     try {
@@ -199,4 +207,8 @@ class TicketService {
   }
 }
 
+/**
+ * @description Exportar servicios
+ * @module ticketService
+ */
 module.exports = new TicketService();   

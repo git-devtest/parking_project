@@ -7,7 +7,10 @@ const rateLimit = require('express-rate-limit');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const logger = require('./utils/logger');
 
-// Import routes
+/**
+ * @description Importa las rutas
+ * @module routes
+ */
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -20,7 +23,10 @@ const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 
-// Rate limiting
+/**
+ * @description Limita el número de solicitudes
+ * @module rateLimit
+ */
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000,
@@ -30,7 +36,10 @@ const limiter = rateLimit({
   }
 });
 
-// Middleware
+/**
+ * @description Middleware
+ * @module middleware
+ */
 app.use(helmet());
 app.use(compression());
 app.use(limiter);
@@ -39,7 +48,10 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
+/**
+ * @description Health check
+ * @module healthCheck
+ */
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -49,7 +61,10 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Routes
+/**
+ * @description Rutas
+ * @module routes
+ */
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/auth', authRoutes);
@@ -60,8 +75,15 @@ app.use('/api/backups', backupRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/tickets', ticketRoutes);
 
-// Error handling
+/**
+ * @description Error handling
+ * @module errorHandling
+ */
 app.use(notFound);
 app.use(errorHandler);
 
+/**
+ * @description Exporta la aplicación
+ * @module app
+ */
 module.exports = app;

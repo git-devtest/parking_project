@@ -8,12 +8,15 @@ El proyecto incluye los artefactos del modelo de base de datos (diagrama entidad
 Este README actúa como guía principal para entender la arquitectura global, levantar la aplicación en local, y usar/contribuir al proyecto.
 
 ## Estructura del repositorio  
+```bash
 /   
 ├── parking-backend/      # Código del backend (API REST, lógica de negocios, DB)   
 ├── parking-frontend/     # Código del frontend (Angular)   
 ├── Modelo BD.mwb         # Modelo de base de datos (MySQL Workbench)   
 ├── Modelo ER.png         # Diagrama ER de la base de datos   
 └── README.md             # Este archivo (documentación general del proyecto)
+```
+
 ## Tecnologías principales  
 
 - **Backend**: Node.js, Express, (posiblemente MySQL / MySQL2 / otro cliente SQL)  
@@ -21,8 +24,7 @@ Este README actúa como guía principal para entender la arquitectura global, le
 - **Base de datos**: Modelo relacional definido (puedes usar MySQL o variante compatible)  
 
 ## Cómo correr el proyecto (modo desarrollo)  
-
-> Asegúrate de tener instalados Node.js, npm (o yarn), y un servidor de base de datos compatible (MySQL u otro).
+Asegúrate de tener instalados Node.js, npm (o yarn), y un servidor de base de datos compatible (MySQL u otro).
 
 ### 1. Backend  
 

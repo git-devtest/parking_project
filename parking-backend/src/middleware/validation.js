@@ -1,5 +1,9 @@
 const Joi = require('joi');
 
+/**
+ * @description Validación de entrada de vehículo
+ * @module vehicleEntrySchema
+ */
 const vehicleEntrySchema = Joi.object({
   plateNumber: Joi.string()
     .pattern(/^[A-Z0-9]{3,10}$/)
@@ -17,6 +21,10 @@ const vehicleEntrySchema = Joi.object({
     })
 });
 
+/**
+ * @description Validación de salida de vehículo
+ * @module vehicleExitSchema
+ */
 const vehicleExitSchema = Joi.object({
   plateNumber: Joi.string()
     .pattern(/^[A-Z0-9]{3,10}$/)
@@ -27,6 +35,10 @@ const vehicleExitSchema = Joi.object({
     })
 });
 
+/**
+ * @description Validación de rango de fechas
+ * @module dateRangeSchema
+ */
 const dateRangeSchema = Joi.object({
   range: Joi.string()
     .valid('today', 'last_week', 'last_month')
@@ -36,6 +48,11 @@ const dateRangeSchema = Joi.object({
   endDate: Joi.date().optional()
 });
 
+/**
+ * @description Validación de entrada de vehículo
+ * @module validate
+ * @param {Object} schema - Esquema de validación
+ */
 const validate = (schema) => {
   return (req, res, next) => {
     console.log('📨 Body recibido:', req.body); // ← Agregar esta línea
@@ -54,6 +71,10 @@ const validate = (schema) => {
   };
 };
 
+/**
+ * @description Exportar validaciones
+ * @module exportValidations
+ */
 module.exports = {
   validateVehicleEntry: validate(vehicleEntrySchema),
   validateVehicleExit: validate(vehicleExitSchema),

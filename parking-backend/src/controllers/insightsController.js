@@ -2,9 +2,18 @@
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 
+/**
+ * @description Controlador para obtener información de insights
+ * @module InsightsController
+ */
 class InsightsController {
   
-  // Dashboard completo
+  /**
+   * @description Obtiene el dashboard completo
+   * @module getDashboard
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getDashboard(req, res) {
     try {
       const connection = await pool.getConnection();
@@ -53,7 +62,12 @@ class InsightsController {
     }
   }
 
-  // Endpoint individual para ocupación en tiempo real
+  /**
+   * @description Obtiene la ocupación en tiempo real
+   * @module getCurrentOccupancy
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getCurrentOccupancy(req, res) {
     try {
       const connection = await pool.getConnection();
@@ -87,7 +101,12 @@ class InsightsController {
     }
   }
 
-  // Vehículos actualmente estacionados
+  /**
+   * @description Obtiene los vehículos actualmente estacionados
+   * @module getCurrentlyParked
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getCurrentlyParked(req, res) {
     try {
       const connection = await pool.getConnection();
@@ -122,4 +141,8 @@ class InsightsController {
   }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new InsightsController();

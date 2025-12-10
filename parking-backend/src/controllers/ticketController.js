@@ -1,8 +1,13 @@
-// src/controllers/ticketController.js
 const ticketService = require('../services/ticketService');
 const auditService = require('../services/auditService');
 const logger = require('../utils/logger');
 
+/**
+ * @description Reimprime un ticket
+ * @module reprintTicket
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ */
 exports.reprintTicket = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -20,6 +25,12 @@ exports.reprintTicket = async (req, res) => {
   }
 };
 
+/**
+ * @description Obtiene el último ticket por placa
+ * @module getLastTicket
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ */
 exports.getLastTicket = async (req, res) => {
   try {
     const { plateNumber } = req.params;

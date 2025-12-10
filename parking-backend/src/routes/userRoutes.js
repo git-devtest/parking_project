@@ -5,22 +5,44 @@ const userController = require('../controllers/userController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { registerValidation } = require('../middleware/authValidation');
 
-// Listar usuarios (solo ADMIN)
+/**
+ * @description Listar usuarios (solo ADMIN)
+ * @route GET /users
+ */
 router.get('/', authenticateToken, requireRole(['ADMIN']), userController.getAllUsers);
 
-// Crear usuario (solo ADMIN)
+/**
+ * @description Crear usuario (solo ADMIN)
+ * @route POST /users
+ */
 router.post('/', authenticateToken, requireRole(['ADMIN']), registerValidation, userController.createUser);
 
-// Cambiar contraseña (solo el mismo usuario)
+/**
+ * @description Cambiar contraseña (solo el mismo usuario)
+ * @route PUT /change-password
+ */
 router.put('/change-password', authenticateToken, userController.changePassword);
 
-// Obtener usuario por ID (ADMIN y el mismo usuario)
+/**
+ * @description Obtener usuario por ID (ADMIN y el mismo usuario)
+ * @route GET /:id
+ */
 router.get('/:id', authenticateToken, userController.getUserById);
 
-// Editar usuario (ADMIN o el mismo usuario)
+/**
+ * @description Editar usuario (ADMIN o el mismo usuario)
+ * @route PUT /:id
+ */
 router.put('/:id', authenticateToken, requireRole(['ADMIN', 'OPERATOR']), userController.updateUser);
 
-// Inactivar usuario (solo ADMIN)
+/**
+ * @description Inactivar usuario (solo ADMIN)
+ * @route DELETE /:id
+ */
 router.delete('/:id', authenticateToken, requireRole(['ADMIN']), userController.deleteUser);
 
+/**
+ * @description Exportar rutas
+ * @module userRoutes
+ */
 module.exports = router;

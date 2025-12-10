@@ -1,5 +1,13 @@
 const logger = require('../utils/logger');
 
+/**
+ * @description Manejador de errores
+ * @module errorHandler
+ * @param {Object} err - Objeto de error
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función siguiente
+ */
 const errorHandler = (err, req, res, next) => {
   logger.error('Error:', {
     message: err.message,
@@ -36,6 +44,12 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
+/**
+ * @description Manejador de rutas no encontradas
+ * @module notFound
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ */
 const notFound = (req, res) => {
   res.status(404).json({
     success: false,
@@ -43,4 +57,8 @@ const notFound = (req, res) => {
   });
 };
 
+/**
+ * @description Exportar middleware
+ * @module exportMiddleware
+ */
 module.exports = { errorHandler, notFound };

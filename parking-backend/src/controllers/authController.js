@@ -4,7 +4,18 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const logger = require('../utils/logger');
 
+/**
+ * @description Controlador para autenticación
+ * @module AuthController
+ */
 class AuthController {
+
+  /**
+   * @description Controlador para autenticación
+   * @module login
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async login(req, res) {
     try {
       // Validar errores de entrada
@@ -73,6 +84,12 @@ class AuthController {
     }
   }
 
+  /**
+   * @description Controlador para obtener el perfil del usuario
+   * @module getProfile
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getProfile(req, res) {
     try {
       res.json({
@@ -90,6 +107,12 @@ class AuthController {
     }
   }
 
+  /**
+   * @description Controlador para registrar un nuevo usuario
+   * @module register
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async register(req, res) {
     try {
       const errors = validationResult(req);
@@ -142,6 +165,12 @@ class AuthController {
     }
   }
 
+  /**
+   * @description Controlador para obtener todos los usuarios
+   * @module getUsers
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getUsers(req, res) {
     try {
       const users = await User.getAll();
@@ -162,4 +191,8 @@ class AuthController {
   }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new AuthController();

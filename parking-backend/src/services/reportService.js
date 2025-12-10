@@ -1,9 +1,17 @@
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 
+/**
+ * @description Servicio de reportes
+ */
 class ReportService {
+
+  /**
+   * @description Obtener el reporte diario basado en el rango especificado desde la vista DailyIncomeReport
+   * @param {string} range - Rango diario (today, yesterday, week, month, year)
+   * @returns {Promise<{success: boolean, data: Array, summary: {totalIncome: number, totalVehicles: number, averageDuration: number}}>} - Reporte diario
+   */
   async getDailyReport(range = 'today') {
-    // Obtener el reporte diario basado en el rango especificado desde la vista DailyIncomeReport
     try {
       const [rows] = await pool.query(
         `SELECT * FROM dailyincomereport 
@@ -31,6 +39,10 @@ class ReportService {
     }
   }
 
+  /**
+   * @description Obtener los datos del dashboard
+   * @returns {Promise<{success: boolean, data: Array, summary: {totalIncome: number, totalVehicles: number, averageDuration: number}}>} - Datos del dashboard
+   */
   async getDashboardData() {
     try {
       // Vehículos estacionados actualmente
@@ -75,6 +87,12 @@ class ReportService {
     }
   }
 
+  /**
+   * @description Obtener el reporte personalizado
+   * @param {string} startDate - Fecha de inicio
+   * @param {string} endDate - Fecha de fin
+   * @returns {Promise<{success: boolean, data: Array, period: {startDate: string, endDate: string}}>} - Reporte personalizado
+   */
   async getCustomReport(startDate, endDate) {
     try {
       const [rows] = await pool.query(`
@@ -105,4 +123,8 @@ class ReportService {
   }
 }
 
+/**
+ * @description Exportar servicios
+ * @module reportService
+ */
 module.exports = new ReportService();

@@ -3,7 +3,18 @@ const logger = require('../utils/logger');
 const ticketService = require('./ticketService');
 const auditService = require('./auditService');
 
+/**
+ * @description Servicio de vehículos
+ */
 class VehicleService {
+  
+  /**
+   * @description Registrar entrada de vehículo
+   * @param {string} plateNumber - Placa del vehículo
+   * @param {string} vehicleType - Tipo de vehículo
+   * @param {string} user - Usuario que registra la entrada
+   * @returns {Promise<{success: boolean, message: string, data: Array}>} - Resultado de la operación
+   */
   async registerEntry(plateNumber, vehicleType, user) {
     const connection = await pool.getConnection();
     try {
@@ -33,6 +44,12 @@ class VehicleService {
     }
   }
 
+  /**
+   * @description Registrar salida de vehículo
+   * @param {string} plateNumber - Placa del vehículo
+   * @param {string} user - Usuario que registra la salida
+   * @returns {Promise<{success: boolean, message: string, data: Array}>} - Resultado de la operación
+   */
   async registerExit(plateNumber, user) {
     const connection = await pool.getConnection();
     try {
@@ -88,6 +105,10 @@ class VehicleService {
     }
   }
 
+  /**
+   * @description Obtener vehículos estacionados
+   * @returns {Promise<{success: boolean, data: Array, count: number}>} - Vehículos estacionados
+   */
   async getParkedVehicles() {
     // Obtener vehículos actualmente estacionados desde la vista
     try {
@@ -107,6 +128,10 @@ class VehicleService {
     }
   }
 
+  /**
+   * @description Obtener capacidad de estacionamiento
+   * @returns {Promise<{success: boolean, data: Array}>} - Capacidad de estacionamiento
+   */
   async getParkingCapacity() {
     // Obtener capacidad de estacionamiento desde la vista
     try {
@@ -122,6 +147,13 @@ class VehicleService {
     }
   }
 
+  /**
+   * @description Obtener historial de vehículos
+   * @param {number} page - Página actual
+   * @param {number} limit - Cantidad de registros por página
+   * @param {string} searchPlate - Placa de búsqueda
+   * @returns {Promise<{success: boolean, data: Array, pagination: {page: number, limit: number, total: number, pages: number}}>} - Historial de vehículos
+   */
   async getVehicleHistory(page = 1, limit = 20, searchPlate = '') {
     // Obtener historial de vehículos con paginación desde la vista
     try {
@@ -175,4 +207,8 @@ class VehicleService {
   }
 }
 
+/**
+ * @description Exportar servicios
+ * @module vehicleService
+ */
 module.exports = new VehicleService();

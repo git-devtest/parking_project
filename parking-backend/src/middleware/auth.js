@@ -2,6 +2,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const logger = require('../utils/logger');
 
+/**
+ * @description Middleware para autenticar el token
+ * @module authenticateToken
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función siguiente
+ */
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
@@ -50,6 +57,14 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
+/**
+ * @description Middleware para verificar el rol del usuario
+ * @module requireRole
+ * @param {Array} roles - Roles permitidos
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función siguiente
+ */
 const requireRole = (roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -70,4 +85,8 @@ const requireRole = (roles) => {
   };
 };
 
+/**
+ * @description Exportar middleware
+ * @module exportMiddleware
+ */
 module.exports = { authenticateToken, requireRole };

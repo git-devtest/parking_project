@@ -1,6 +1,9 @@
 const aboutService = require('../services/aboutService');
 
-// Controlador para obtener información sobre la base de datos
+/**
+ * @description Controlador para obtener información sobre la base de datos
+ * @module getDatabaseInfo
+ */
 const getDatabaseInfo = async (req, res) => {
   try {
     const dbInfo = await aboutService.getDatabaseInfo();
@@ -10,4 +13,8 @@ const getDatabaseInfo = async (req, res) => {
   }
 };
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = { getDatabaseInfo };

@@ -1,12 +1,17 @@
-// recreate-password.js
 const bcrypt = require('bcryptjs');
 
+/**
+ * @description Recrear contraseña
+ */
 async function resetPassword() {
   const newPassword = 'jhont123';
   const hash = await bcrypt.hash(newPassword, 10);
   console.log('Nuevo hash:', hash);
 }
 
+/**
+ * @description Probar contraseña
+ */
 async function testPassword() {
   const hashFromDB = '$2b$10$pRkJ0HDf/F7pe21UgCbOTuxXVkKd9xP7srKtrQnD5Zbb42eVZRU0.';
   const password = 'jhont123';

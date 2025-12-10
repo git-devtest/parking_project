@@ -5,9 +5,18 @@ const auditService = require('../services/auditService'); // ajusta si tu servic
 const logger = require('../utils/logger'); // tu winston
 const crypto = require('crypto');
 
+/**
+ * @description Controlador para usuarios
+ * @module UserController
+ */
 class UserController {
 
-  // LISTAR (no audit obligatorio para GET, pero logueamos acceso)
+  /**
+   * @description Obtiene todos los usuarios
+   * @module getAllUsers
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getAllUsers(req, res) {
     try {
       const users = await User.getAll();
@@ -19,7 +28,12 @@ class UserController {
     }
   }
 
-  // OBTENER POR ID (logueo de acceso)
+  /**
+   * @description Obtiene un usuario por ID
+   * @module getUserById
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async getUserById(req, res) {
     try {
       const user = await User.findById(req.params.id);
@@ -39,7 +53,12 @@ class UserController {
     }
   }
 
-  // CREAR (INSERT) -> registra audit_log y winston
+  /**
+   * @description Crea un nuevo usuario
+   * @module createUser
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async createUser(req, res) {
     try {
       const errors = validationResult(req);
@@ -91,7 +110,12 @@ class UserController {
     }
   }
 
-  // ACTUALIZAR (UPDATE) — versión final, estable y full auditoría
+  /**
+   * @description Actualiza un usuario
+   * @module updateUser
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async updateUser(req, res) {
     try {
       const { id } = req.params;
@@ -275,7 +299,12 @@ class UserController {
     }
   }
 
-  // DELETE (soft delete)
+  /**
+   * @description Elimina un usuario (soft delete)
+   * @module deleteUser
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async deleteUser(req, res) {
     try {
       const { id } = req.params;
@@ -314,7 +343,12 @@ class UserController {
     }
   }
 
-  // PUT (cambiar contraseña)
+  /**
+   * @description Cambia la contraseña de un usuario
+   * @module changePassword
+   * @param {Object} req - Objeto de solicitud
+   * @param {Object} res - Objeto de respuesta
+   */
   async changePassword(req, res) {
     try {
       const userId = req.user.id;
@@ -372,4 +406,8 @@ class UserController {
   }
 }
 
+/**
+ * @description Exportar controladores
+ * @module exportControllers
+ */
 module.exports = new UserController();

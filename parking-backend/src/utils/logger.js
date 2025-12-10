@@ -1,5 +1,8 @@
 const winston = require('winston');
 
+/**
+ * @description Crear logger
+ */
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -25,10 +28,16 @@ const logger = winston.createLogger({
   ],
 });
 
+/**
+ * @description Agregar transporte de consola
+ */
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.simple()
   }));
 }
 
+/**
+ * @description Exportar logger
+ */
 module.exports = logger;

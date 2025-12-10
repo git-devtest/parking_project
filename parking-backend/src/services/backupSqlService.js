@@ -3,8 +3,15 @@ const path = require('path');
 const fs = require('fs');
 const logger = require('../utils/logger');
 
+/**
+ * @description Servicio de respaldo SQL
+ */
 class BackupSqlService {
     
+    /**
+     * @description Crear un respaldo SQL
+     * @returns {Promise<{success: boolean, file: string, path: string, size: number, sizeMB: string}>}
+     */
     static async createSqlBackup() {
         return new Promise((resolve, reject) => {
             const fileName = `backup-sql-${getLocalTimestamp()}.sql`;
@@ -49,6 +56,10 @@ class BackupSqlService {
     }
 }
 
+/**
+ * @description Obtener timestamp local
+ * @returns {string} - Timestamp local
+ */
 function getLocalTimestamp() {
     const now = new Date();
     const date = now.toLocaleDateString('es-ES').replace(/\//g, '-');
@@ -57,4 +68,8 @@ function getLocalTimestamp() {
     return `${date}_${time}`;
 }
 
+/**
+ * @description Exportar servicios
+ * @module backupSqlService
+ */
 module.exports = BackupSqlService;

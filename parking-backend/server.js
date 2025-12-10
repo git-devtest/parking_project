@@ -12,21 +12,37 @@ console.log('🕐 Servidor configurado con zona horaria:', process.env.TZ);
 console.log('📍 Hora actual del servidor:', new Date().toString());
 // =============================================
 
-// Import script to initialize admin user
+/**
+ * @description Importa el script para inicializar el usuario admin
+ * @module initAdmin
+ */
 const initAdminUser = require('./src/scripts/initAdmin');
 
+/**
+ * @description Puerto del servidor
+ * @module PORT
+ */
 const PORT = process.env.PORT || 3000;
 
-// Test database connection and start server
+/**
+ * @description Test database connection and start server
+ * @module startServer
+ */
 const startServer = async () => {
 
   try {
     await testConnection();
 
-    // Inicializar usuario admin
+    /**
+     * @description Inicializa el usuario admin
+     * @module initAdminUser
+     */
     await initAdminUser();
     
-    // Verificar estructura de la base de datos (solo en desarrollo)
+    /**
+     * @description Verificar estructura de la base de datos (solo en desarrollo)
+     * @module checkDatabaseStructure
+     */
     if (process.env.NODE_ENV === 'development') {
       await checkDatabaseStructure();
     }
@@ -38,7 +54,10 @@ const startServer = async () => {
       logger.info('🕐 Servidor configurado con zona horaria:', process.env.TZ);
     });
 
-    // Manejar errores del servidor
+    /**
+     * @description Manejar errores del servidor
+     * @module errorServer
+     */
     server.on('error', (error) => {
       if (error.code === 'EADDRINUSE') {
         logger.error(`❌ Puerto ${PORT} ya está en uso`);
@@ -55,12 +74,18 @@ const startServer = async () => {
   }
 };
 
-// Graceful shutdown
+/**
+ * @description Graceful shutdown
+ * @module shutdown
+ */
 const shutdown = async (signal) => {
   logger.info(`📞 Recibido ${signal}, cerrando servidor gracefully...`);
   
   try {
-    // Dar tiempo para que las conexiones actuales terminen
+    /**
+     * @description Dar tiempo para que las conexiones actuales terminen
+     * @module timeout
+     */
     setTimeout(() => {
       logger.warn('⏰ Timeout de shutdown forzado');
       process.exit(1);
@@ -75,20 +100,33 @@ const shutdown = async (signal) => {
   }
 };
 
-// Manejadores de señales
+/**
+ * @description Manejadores de señales
+ * @module signalHandlers
+ */
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGINT', () => shutdown('SIGINT'));
 
-// Manejar unhandled rejections
+/**
+ * @description Manejar unhandled rejections
+ * @module unhandledRejections
+ */
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
 });
 
-// Manejar uncaught exceptions
+/**
+ * @description Manejar uncaught exceptions
+ * @module uncaughtExceptions
+ */
 process.on('uncaughtException', (error) => {
   logger.error('❌ Uncaught Exception:', error);
   process.exit(1);
 });
 
+/**
+ * @description Iniciar el servidor
+ * @module startServer
+ */
 startServer();

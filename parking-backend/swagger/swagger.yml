@@ -24,8 +24,11 @@ info:
 servers:
   - url: http://localhost:3000
     description: Servidor de desarrollo
+  - url: http://localhost:3000/api-docs
+    description: Documentación de la API (Este documento)
   - url: https://api.parking-project.com
     description: Servidor de producción
+
 
 # Configuración de seguridad JWT
 components:
@@ -2007,7 +2010,13 @@ paths:
 tags:
   - name: Autenticación
     description: Endpoints de autenticación y registro
-  - name: Usuarios
-    description: Gestión de usuarios (requiere autenticación, algunos endpoints requieren ADMIN)
   - name: Admin
     description: Endpoints administrativos (requiere autenticación, solo ADMIN)
+  - name: Usuarios
+    description: Gestión de usuarios (requiere autenticación, algunos endpoints requieren ADMIN)
+  - name: Reportes
+    description: Endpoints de reportes (requiere autenticación, algunos endpoints requieren ADMIN)
+  - name: Insights
+    description: Endpoints de insights (requiere autenticación, algunos endpoints requieren ADMIN)
+  - name: Vehículos
+    description: Gestión de vehículos (requiere autenticación, algunos endpoints requieren ADMIN)

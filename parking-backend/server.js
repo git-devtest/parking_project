@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from "dotenv";
+
 const app = require('./src/app');
 const { testConnection, closePool } = require('./src/config/database');
 const { checkDatabaseStructure } = require('./src/utils/dbCheck');
@@ -11,6 +12,11 @@ process.env.TZ = 'America/Bogota'; // Ajusta según tu país
 console.log('🕐 Servidor configurado con zona horaria:', process.env.TZ);
 console.log('📍 Hora actual del servidor:', new Date().toString());
 // =============================================
+
+// Solo usar .env en desarrollo
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 /**
  * @description Importa el script para inicializar el usuario admin

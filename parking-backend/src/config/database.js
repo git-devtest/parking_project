@@ -2,6 +2,13 @@ const mysql = require('mysql2/promise');
 const logger = require('../utils/logger');
 require('dotenv').config();
 
+console.log("ENV DEBUG:", {
+  DB_HOST: process.env.DB_HOST,
+  DB_USER: process.env.DB_USER,
+  DB_NAME: process.env.DB_NAME,
+  DB_PORT: process.env.DB_PORT,
+});
+
 /**
  * @description Configuración de la base de datos
  * @type {Object} dbConfig

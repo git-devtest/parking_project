@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Vehicle {
   id: string;
@@ -74,8 +75,9 @@ export interface DashboardData {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3000/api';
+  //private baseUrl = 'http://localhost:3000/api';
   //private baseUrl = 'http://192.168.0.100:3000/api';
+  private apiUrl = environment.apiUrl+'/api';
 
   constructor(
     private http: HttpClient,
@@ -84,24 +86,24 @@ export class ApiService {
 
   // Auth endpoints
   getProfile() {
-    return this.http.get(`${this.baseUrl}/auth/me`);
+    return this.http.get(`${this.apiUrl}/auth/me`);
   }
 
   // Vehicle endpoints
   registerVehicleEntry(plateNumber: string, vehicleType: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/vehicles/entry`, { plateNumber, vehicleType });
+    return this.http.post(`${this.apiUrl}/vehicles/entry`, { plateNumber, vehicleType });
   }
 
   registerVehicleExit(plateNumber: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/vehicles/exit`, { plateNumber });
+    return this.http.post(`${this.apiUrl}/vehicles/exit`, { plateNumber });
   }
 
   getParkedVehicles(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/parked`);
+    return this.http.get(`${this.apiUrl}/vehicles/parked`);
   }
 
   getParkingCapacity(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/vehicles/capacity`);
+    return this.http.get(`${this.apiUrl}/vehicles/capacity`);
   }
 
   getVehicleHistory(page: number = 1, limit: number = 20, searchPlate?: string): Observable<any> {
@@ -109,33 +111,33 @@ export class ApiService {
     if (searchPlate && searchPlate.trim() !== '') {
       params += `&searchPlate=${encodeURIComponent(searchPlate.trim())}`;
     }
-    return this.http.get(`${this.baseUrl}/vehicles/history?${params}`);
+    return this.http.get(`${this.apiUrl}/vehicles/history?${params}`);
   }
 
   // Report endpoints
   getDailyReport(range: string = 'today'): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/daily?range=${range}`);
+    return this.http.get(`${this.apiUrl}/reports/daily?range=${range}`);
   }
 
   getDashboardData(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/dashboard`);
+    return this.http.get(`${this.apiUrl}/reports/dashboard`);
   }
 
   getCustomReport(startDate: string, endDate: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reports/custom?startDate=${startDate}&endDate=${endDate}`);
+    return this.http.get(`${this.apiUrl}/reports/custom?startDate=${startDate}&endDate=${endDate}`);
   }
 
   exitVehicle(plateNumber: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/vehicles/exit`, { plateNumber });
+    return this.http.post(`${this.apiUrl}/vehicles/exit`, { plateNumber });
   }
 
   getLastTicket(plateNumber: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/tickets/last/${plateNumber}`);
+    return this.http.get(`${this.apiUrl}/tickets/last/${plateNumber}`);
   }
 
   // api.service.ts
   changePassword(currentPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/users/change-password`, {
+    return this.http.put(`${this.apiUrl}/users/change-password`, {
       currentPassword,
       newPassword
     });

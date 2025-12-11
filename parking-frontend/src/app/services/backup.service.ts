@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface BackupFile {
   filename: string;
@@ -29,8 +30,9 @@ interface ProgressData {
 })
 export class BackupService {
 
-  private apiUrl = 'http://localhost:3000/api/backups';
+  //private apiUrl = 'http://localhost:3000/api/backups';
   //private apiUrl = 'http://192.168.0.100:3000/api/backups';
+  private apiUrl = environment.apiUrl+'/api/backups';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

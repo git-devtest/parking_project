@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface DatabaseInfo {
   name: string;
@@ -11,8 +12,9 @@ export interface DatabaseInfo {
   providedIn: 'root'
 })
 export class AppInfoService {
-  private apiUrl = 'http://localhost:3000/api/info';
+  //private apiUrl = 'http://localhost:3000/api/info';
   //private apiUrl = 'http://192.168.0.100:3000/api/info';
+  private apiUrl = environment.apiUrl+'/api/info';
 
   constructor(
     private http: HttpClient, 

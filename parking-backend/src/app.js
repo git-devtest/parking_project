@@ -26,6 +26,13 @@ const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 
+// Configuración CORS
+const corsOptions = {
+  origin: 'https://web-6uyr9ck2h3in.up-de-fra1-k8s-1.apps.run-on-seenode.com',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 /**
  * @description Limita el número de solicitudes
  * @module rateLimit
@@ -46,7 +53,7 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(compression());
 app.use(limiter);
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));

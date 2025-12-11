@@ -9,13 +9,15 @@ import {
   CurrentOccupancy,
   CurrentlyParkedVehicle
 } from '../interfaces/insights';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InsightsService {
   private http = inject(HttpClient);
-  private apiUrl = `http://localhost:3000/api/insights`; // Ajusta según tu configuración
+  //private apiUrl = `http://localhost:3000/api/insights`; // Ajusta según tu configuración
+  private apiUrl = environment.apiUrl+'/api/insights';
 
   /**
    * Obtiene el dashboard completo con todos los datasets

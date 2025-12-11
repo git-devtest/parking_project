@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-
 const app = require('./src/app');
 const { testConnection, closePool } = require('./src/config/database');
 const { checkDatabaseStructure } = require('./src/utils/dbCheck');
@@ -15,7 +13,7 @@ console.log('📍 Hora actual del servidor:', new Date().toString());
 
 // Solo usar .env en desarrollo
 if (process.env.NODE_ENV !== "production") {
-  dotenv.config();
+  require('dotenv').config();
 }
 
 /**

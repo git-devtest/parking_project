@@ -46,6 +46,7 @@ class VehicleController {
       
       res.status(200).json(result);
     } catch (error) {
+      console.error('Error completo:', JSON.stringify(error, null, 2));
       console.error('Error en vehicleController:', error);
       res.status(500).json({
       success: false,

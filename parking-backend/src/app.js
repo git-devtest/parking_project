@@ -28,7 +28,7 @@ const app = express();
 
 // Configuración CORS
 const corsOptions = {
-  origin: 'https://web-6uyr9ck2h3in.up-de-fra1-k8s-1.apps.run-on-seenode.com',
+  origin: 'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com',
   credentials: true,
   optionsSuccessStatus: 200
 };

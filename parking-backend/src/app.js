@@ -26,11 +26,26 @@ const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 
+// Configuración CORS más robusta
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:3000',
+  'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com'
+];
+
 // Configuración CORS
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com'
-    : ['http://localhost:4200', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    // Permite requests sin origin (Postman, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('❌ Origin rechazado:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

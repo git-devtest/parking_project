@@ -60,7 +60,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 // Cargar el archivo swagger.yml
 const swaggerDocument = YAML.load(path.join(__dirname, '../swagger/swagger.yml'));

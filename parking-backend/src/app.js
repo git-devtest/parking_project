@@ -28,7 +28,9 @@ const app = express();
 
 // Configuración CORS
 const corsOptions = {
-  origin: 'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com',
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com'
+    : ['http://localhost:4200', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

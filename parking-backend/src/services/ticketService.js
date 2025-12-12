@@ -31,9 +31,9 @@ class TicketService {
           ps.duration,
           ps.amount,
           ps.status
-        FROM Vehicle v
-        INNER JOIN VehicleType vt ON v.vehicleType = vt.type_name
-        LEFT JOIN ParkingSession ps ON v.id = ps.vehicleId 
+        FROM vehicle v
+        INNER JOIN vehicletype vt ON v.vehicleType = vt.type_name
+        LEFT JOIN parkingsession ps ON v.id = ps.vehicleId 
         WHERE v.plateNumber = ?
           AND v.status = 'EXITED'
         ORDER BY ps.exitTime DESC
@@ -106,9 +106,9 @@ class TicketService {
           ps.duration,
           ps.amount,
           ps.status
-        FROM ParkingSession ps
-        INNER JOIN Vehicle v ON ps.vehicleId = v.id
-        INNER JOIN VehicleType vt ON v.vehicleType = vt.type_name
+        FROM parkingsession ps
+        INNER JOIN vehicle v ON ps.vehicleId = v.id
+        INNER JOIN vehicletype vt ON v.vehicleType = vt.type_name
         WHERE ps.id = ?
       `, [sessionId]);
 
@@ -172,9 +172,9 @@ class TicketService {
           ps.duration,
           ps.amount,
           ps.status
-        FROM ParkingSession ps
-        INNER JOIN Vehicle v ON ps.vehicleId = v.id
-        INNER JOIN VehicleType vt ON v.vehicleType = vt.type_name
+        FROM parkingsession ps
+        INNER JOIN vehicle v ON ps.vehicleId = v.id
+        INNER JOIN vehicletype vt ON v.vehicleType = vt.type_name
         WHERE v.plateNumber = ? AND ps.status = 'COMPLETED'
         ORDER BY ps.exitTime DESC
         LIMIT 1

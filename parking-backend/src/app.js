@@ -30,6 +30,8 @@ const app = express();
 const corsOptions = {
   origin: 'https://web-93ycjjsy1zjz.up-de-fra1-k8s-1.apps.run-on-seenode.com',
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 };
 
@@ -53,10 +55,12 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(compression());
 app.use(limiter);
-app.use(cors(corsOptions));
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Cargar el archivo swagger.yml
 const swaggerDocument = YAML.load(path.join(__dirname, '../swagger/swagger.yml'));

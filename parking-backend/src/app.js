@@ -77,6 +77,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
   }
 }));
 
+// ⭐ Versión para tracking
+const APP_VERSION = '2.0.1'; 
+console.log(`🚀 Iniciando backend v${APP_VERSION}`);
+
 /**
  * @description Health check
  * @module healthCheck
@@ -85,6 +89,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Servicio funcionando correctamente',
+    version: APP_VERSION,
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });

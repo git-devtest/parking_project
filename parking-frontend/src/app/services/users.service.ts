@@ -26,26 +26,26 @@ export class UsersService {
 
   // Obtener todos los usuarios
   getUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users`, this.getHeaders());
+    return this.http.get(`${this.apiUrl}/`, this.getHeaders());
   }
 
   // Obtener usuario por ID
   getUserById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users/${id}`, this.getHeaders());
+    return this.http.get(`${this.apiUrl}/${id}`, this.getHeaders());
   }
 
   // Crear usuario
   createUser(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users`, userData, this.getHeaders());
+    return this.http.post(`${this.apiUrl}/`, userData, this.getHeaders());
   }
 
   // Actualizar usuario
   updateUser(id: string, userData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/users/${id}`, userData, this.getHeaders());
+    return this.http.put(`${this.apiUrl}/${id}`, userData, this.getHeaders());
   }
 
   // Inactivar usuario
   deleteUser(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/users/${id}`, this.getHeaders());
+    return this.http.delete(`${this.apiUrl}/${id}`, this.getHeaders());
   }
 }

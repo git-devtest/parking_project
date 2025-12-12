@@ -11,7 +11,7 @@ export class UsersService {
   //private baseUrl = `http://localhost:3000/api/users`;
   //private baseUrl = 'http://192.168.0.100:3000/api/users';
   //private apiUrl = environment.apiUrl+'/api/users';
-  private apiUrl = environment.apiUrl+'/api';
+  private apiUrl = environment.apiUrl+'/api/users';
 
   constructor(private http: HttpClient) {}
 

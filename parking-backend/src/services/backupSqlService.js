@@ -57,6 +57,15 @@ class BackupSqlService {
             
         } catch (error) {
             logger.error(`❌ Error mysqldump: ${error.message}`);
+
+            // ⭐ ENVÍA EL ERROR COMPLETO AL CLIENTE (temporal para debug)
+            res.status(500).json({ 
+                success: false, 
+                message: "Error generando backup SQL",
+                error: error.message,           // ⭐ Agrega esto
+                stack: error.stack,             // ⭐ Agrega esto
+                details: error.toString()       // ⭐ Agrega esto
+            });
             throw error;
         }
     }

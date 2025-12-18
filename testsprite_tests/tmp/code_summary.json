@@ -1,0 +1,168 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Angular 20",
+    "Angular Material",
+    "Chart.js",
+    "ng2-charts",
+    "jsPDF",
+    "XLSX",
+    "HTML2Canvas",
+    "MySQL 8.0.44",
+    "Node.js",
+    "Express.js",
+    "JWT",
+    "bcryptjs"
+  ],
+  "features": [
+    {
+      "name": "Authentication & Authorization",
+      "description": "JWT-based authentication with role-based access control (ADMIN, operator). Handles login, logout, session management.",
+      "files": [
+        "parking-frontend/src/app/core/services/auth.service.ts",
+        "parking-frontend/src/app/core/guards/auth.guard.ts",
+        "parking-frontend/src/app/components/login/login.component.ts",
+        "parking-frontend/src/app/components/login/login.component.html",
+        "parking-backend/src/controllers/authController.js",
+        "parking-backend/src/middleware/auth.js"
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Main dashboard showing parking system overview, real-time occupancy, vehicle statistics, and system health metrics.",
+      "files": [
+        "parking-frontend/src/app/components/dashboard/dashboard.component.ts",
+        "parking-frontend/src/app/components/dashboard/dashboard.component.html",
+        "parking-backend/src/controllers/insightsController.js",
+        "parking-backend/src/services/insightsService.js"
+      ]
+    },
+    {
+      "name": "Vehicle Entry Management",
+      "description": "Handles vehicle entry registration with plate validation, vehicle type selection, timestamp recording, and ticket generation.",
+      "files": [
+        "parking-frontend/src/app/components/vehicle-entry/vehicle-entry.component.ts",
+        "parking-frontend/src/app/components/vehicle-entry/vehicle-entry.component.html",
+        "parking-backend/src/controllers/vehicleController.js",
+        "parking-backend/src/services/vehicleService.js"
+      ]
+    },
+    {
+      "name": "Vehicle Exit Management",
+      "description": "Processes vehicle exits with automatic fee calculation based on parking duration, generates receipts, handles payment confirmation.",
+      "files": [
+        "parking-frontend/src/app/components/vehicle-exit/vehicle-exit.component.ts",
+        "parking-frontend/src/app/components/vehicle-exit/vehicle-exit.component.html",
+        "parking-backend/src/controllers/vehicleController.js",
+        "parking-backend/src/services/vehicleService.js"
+      ]
+    },
+    {
+      "name": "Reports Generation",
+      "description": "Generates daily, weekly, monthly reports with data exports (PDF, Excel). Includes occupancy metrics, revenue data, and vehicle statistics.",
+      "files": [
+        "parking-frontend/src/app/components/reports/reports.component.ts",
+        "parking-frontend/src/app/components/reports/reports.component.html",
+        "parking-backend/src/controllers/reportController.js",
+        "parking-backend/src/services/reportService.js"
+      ]
+    },
+    {
+      "name": "User Management",
+      "description": "Admin interface for managing system users, including creation, modification, deletion, and role assignment.",
+      "files": [
+        "parking-frontend/src/app/components/user-management/user-management.component.ts",
+        "parking-frontend/src/app/components/user-management/user-management.component.html",
+        "parking-backend/src/controllers/userController.js",
+        "parking-backend/src/services/userService.js"
+      ]
+    },
+    {
+      "name": "Audit & Logging",
+      "description": "Tracks all system actions, user activities, and changes. Maintains audit trail for compliance and security purposes.",
+      "files": [
+        "parking-frontend/src/app/components/audit/audit.component.ts",
+        "parking-frontend/src/app/components/audit/audit.component.html",
+        "parking-backend/src/controllers/auditController.js",
+        "parking-backend/src/services/auditService.js"
+      ]
+    },
+    {
+      "name": "Data Visualization",
+      "description": "Interactive charts and graphs showing parking metrics, occupancy trends, revenue patterns using Chart.js and ng2-charts.",
+      "files": [
+        "parking-frontend/src/app/components/charts/occupancy-chart.component.ts",
+        "parking-frontend/src/app/components/charts/revenue-chart.component.ts",
+        "parking-frontend/src/app/components/dashboard/dashboard.component.ts"
+      ]
+    },
+    {
+      "name": "PDF Generation & Download",
+      "description": "Creates and downloads PDF documents including tickets, receipts, and reports using jsPDF and HTML2Canvas.",
+      "files": [
+        "parking-frontend/src/app/services/pdf.service.ts",
+        "parking-frontend/src/app/components/vehicle-entry/vehicle-entry.component.ts",
+        "parking-backend/src/services/backupSqlService.js"
+      ]
+    },
+    {
+      "name": "Data Export",
+      "description": "Exports data to Excel format using XLSX library for reports and data analysis.",
+      "files": [
+        "parking-frontend/src/app/services/export.service.ts",
+        "parking-frontend/src/app/components/reports/reports.component.ts"
+      ]
+    },
+    {
+      "name": "Database Backup & Recovery",
+      "description": "Handles database backups in SQL format and JSON format, with recovery procedures for disaster recovery.",
+      "files": [
+        "parking-frontend/src/app/components/admin/backup/backup.component.ts",
+        "parking-backend/src/controllers/backupController.js",
+        "parking-backend/src/services/backupSqlService.js"
+      ]
+    },
+    {
+      "name": "Settings & Configuration",
+      "description": "System configuration management including parking fees, capacity settings, working hours, and general system preferences.",
+      "files": [
+        "parking-frontend/src/app/components/settings/settings.component.ts",
+        "parking-frontend/src/app/components/settings/settings.component.html",
+        "parking-backend/src/config/database.js"
+      ]
+    },
+    {
+      "name": "Navigation & Routing",
+      "description": "Angular routing configuration with protected routes, lazy loading, and route guards for access control.",
+      "files": [
+        "parking-frontend/src/app/app.routes.ts",
+        "parking-frontend/src/app/app.config.ts"
+      ]
+    },
+    {
+      "name": "HTTP Client & API Interceptors",
+      "description": "Centralized HTTP communication with JWT token injection, error handling, and request/response interceptors.",
+      "files": [
+        "parking-frontend/src/app/core/services/http-client.service.ts",
+        "parking-frontend/src/app/core/interceptors/auth.interceptor.ts",
+        "parking-frontend/src/app/core/interceptors/error.interceptor.ts"
+      ]
+    },
+    {
+      "name": "Form Validation",
+      "description": "Client-side form validation for vehicle entry, user management, and settings forms with real-time feedback.",
+      "files": [
+        "parking-frontend/src/app/components/vehicle-entry/vehicle-entry.component.ts",
+        "parking-backend/src/middleware/validation.js"
+      ]
+    },
+    {
+      "name": "API Health Check",
+      "description": "Monitors backend API health status including database connectivity and system availability.",
+      "files": [
+        "parking-backend/src/routes/aboutRoutes.js",
+        "parking-backend/src/controllers/aboutController.js"
+      ]
+    }
+  ]
+}

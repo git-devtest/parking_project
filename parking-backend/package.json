@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon --ext js,json,yml,yaml --watch . server.js ./swagger/swagger.yml",
-    "test": "jest"
+    "test": "jest",
+    "test:testsprite": "testsprite run --config ../testsprite.config.json",
+    "test:testsprite:api": "testsprite run --suite=api --config ../testsprite.config.json",
+    "test:testsprite:integration": "testsprite run --suite=integration --config ../testsprite.config.json",
+    "test:all": "npm test && npm run test:testsprite"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

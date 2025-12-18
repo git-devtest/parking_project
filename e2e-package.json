@@ -1,0 +1,13 @@
+{
+  "name": "parking-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests for Parking System",
+  "main": "e2e-tests.js",
+  "scripts": {
+    "test:e2e": "node e2e-tests.js",
+    "test:e2e:debug": "node --inspect e2e-tests.js"
+  },
+  "dependencies": {
+    "puppeteer": "^22.12.0"
+  }
+}

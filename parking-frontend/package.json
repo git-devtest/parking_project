@@ -4,9 +4,14 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run build && npx serve -s dist/parking-frontend/browser -l 8080",
+    "dev": "ng serve",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:testsprite": "testsprite run --frontend --config ../testsprite.config.json",
+    "test:testsprite:e2e": "testsprite run --suite=e2e --config ../testsprite.config.json",
+    "test:testsprite:ui": "testsprite run --suite=ui --config ../testsprite.config.json",
+    "test:all": "ng test && npm run test:testsprite"
   },
   "prettier": {
     "printWidth": 100,

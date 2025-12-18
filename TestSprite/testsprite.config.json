@@ -1,0 +1,161 @@
+{
+    "project": {
+        "name": "parking-project",
+        "version": "2.0.1",
+        "description": "Parking management system with vehicle tracking, reporting, and analytics",
+        "type": "fullstack"
+    },
+    "stack": {
+        "backend": {
+            "framework": "express",
+            "language": "javascript",
+            "runtime": "node",
+            "database": "mysql",
+            "port": 3000
+        },
+        "frontend": {
+            "framework": "angular",
+            "version": "20",
+            "language": "typescript",
+            "port": 4200
+        }
+    },
+    "testing": {
+        "backend": {
+            "baseUrl": "http://localhost:3000",
+            "apiPrefix": "/api",
+            "endpoints": [
+                {
+                    "group": "health",
+                    "path": "/health",
+                    "methods": [
+                        "GET"
+                    ]
+                },
+                {
+                    "group": "auth",
+                    "path": "/api/auth",
+                    "methods": [
+                        "POST"
+                    ],
+                    "requiresAuth": false
+                },
+                {
+                    "group": "vehicles",
+                    "path": "/api/vehicles",
+                    "methods": [
+                        "GET",
+                        "POST"
+                    ],
+                    "requiresAuth": true
+                },
+                {
+                    "group": "reports",
+                    "path": "/api/reports",
+                    "methods": [
+                        "GET"
+                    ],
+                    "requiresAuth": true
+                },
+                {
+                    "group": "users",
+                    "path": "/api/users",
+                    "methods": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE"
+                    ],
+                    "requiresAuth": true,
+                    "requiresAdmin": true
+                },
+                {
+                    "group": "tickets",
+                    "path": "/api/tickets",
+                    "methods": [
+                        "GET",
+                        "POST"
+                    ],
+                    "requiresAuth": true
+                },
+                {
+                    "group": "insights",
+                    "path": "/api/insights",
+                    "methods": [
+                        "GET"
+                    ],
+                    "requiresAuth": true
+                },
+                {
+                    "group": "audit",
+                    "path": "/api/audit",
+                    "methods": [
+                        "GET"
+                    ],
+                    "requiresAuth": true,
+                    "requiresAdmin": true
+                },
+                {
+                    "group": "backups",
+                    "path": "/api/backups",
+                    "methods": [
+                        "GET",
+                        "POST"
+                    ],
+                    "requiresAuth": true,
+                    "requiresAdmin": true
+                }
+            ],
+            "testTypes": [
+                "unit",
+                "integration",
+                "api",
+                "security",
+                "performance"
+            ]
+        },
+        "frontend": {
+            "baseUrl": "http://localhost:4200",
+            "testTypes": [
+                "e2e",
+                "ui",
+                "accessibility",
+                "visual-regression",
+                "performance"
+            ],
+            "criticalPaths": [
+                "login-flow",
+                "vehicle-entry",
+                "vehicle-exit",
+                "dashboard-view",
+                "report-generation"
+            ]
+        }
+    },
+    "coverage": {
+        "target": {
+            "statements": 80,
+            "branches": 75,
+            "functions": 80,
+            "lines": 80
+        }
+    },
+    "execution": {
+        "parallel": true,
+        "maxWorkers": 4,
+        "timeout": 30000,
+        "retries": 2,
+        "cloud": true
+    },
+    "reporting": {
+        "formats": [
+            "json",
+            "html",
+            "junit"
+        ],
+        "outputDir": "./test-reports",
+        "screenshots": true,
+        "videos": true,
+        "detailedErrors": true
+    }
+}

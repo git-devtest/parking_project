@@ -1,0 +1,439 @@
+[
+  {
+    "id": "TC001",
+    "title": "User login with valid credentials",
+    "description": "Verify that a user can successfully log in with valid username and password and receives a valid JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/login with valid username and password."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the response status is 200 OK and response contains a valid JWT token."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User login with invalid credentials",
+    "description": "Verify system returns unauthorized error for invalid login credentials.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/auth/login with invalid username or password."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the response status is 401 Unauthorized with appropriate error message."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "JWT token required for protected endpoints",
+    "description": "Ensure that endpoints requiring authorization reject requests without JWT token.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to a protected API endpoint (e.g. /api/vehicles/parked) without a JWT token."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Role-based access control enforcement",
+    "description": "Verify that users with different roles (Admin, Operator) have correct permissions on CRUD operations.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as a user with Operator role and attempt to create a new user."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that access is denied if Operators are not permitted to create users."
+      },
+      {
+        "type": "action",
+        "description": "Log in as Admin and create, update, delete users."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Admin role has successful access for user management endpoints."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Vehicle entry registration",
+    "description": "Test vehicle entry registration to ensure a parking ticket is created and parking capacity updates.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/vehicles/entry with vehicle data."
+      },
+      {
+        "type": "assertion",
+        "description": "Check response status is 201 Created with valid parking ticket details."
+      },
+      {
+        "type": "action",
+        "description": "Fetch current parking capacity via /api/vehicles/capacity."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify parking capacity is decreased accordingly."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Vehicle exit registration and fee calculation",
+    "description": "Ensure vehicle exit registration calculates fees correctly and ticket status updates to paid.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/vehicles/exit with vehicle identifier."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the correct parking fee is calculated and included in the response."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the ticket status is updated to paid."
+      },
+      {
+        "type": "action",
+        "description": "Check updated parking capacity via /api/vehicles/capacity."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that parking capacity increases after vehicle exit."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Get list of currently parked vehicles",
+    "description": "Retrieve list of all vehicles currently parked and verify accuracy.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/vehicles/parked."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains a list of vehicles that have not exited."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Vehicle history retrieval",
+    "description": "Verify retrieval of complete vehicle parking history records.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/vehicles/history with filter parameters."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify returned history records match expectations."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Create, update and delete user",
+    "description": "Test user management API's full CRUD capabilities including role assignment.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/users with new user details and role."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is created successfully with correct attributes."
+      },
+      {
+        "type": "action",
+        "description": "Send PUT request to /api/users/:id to update user details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user details are updated correctly."
+      },
+      {
+        "type": "action",
+        "description": "Send DELETE request to /api/users/:id to remove the user."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the user is deleted and cannot be retrieved afterward."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Generate daily and monthly reports",
+    "description": "Validate generation of parking usage and income reports with accurate data.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/reports/daily for a specific day."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reported income and occupancy statistics are correct."
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/reports/monthly for a given month."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify summarized monthly data matches expected calculations."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Audit trail record creation and retrieval",
+    "description": "Ensure that all key system events and user actions are recorded and retrievable through audit logs.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform user actions that modify system state (e.g., create vehicle entry, update user)."
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/audit/logs to retrieve audit trail."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify audit log entries contain accurate details of performed actions including user and timestamp."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Database backup creation and listing",
+    "description": "Verify that backups can be created and listed correctly in both SQL and JSON formats.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/backup/create to generate a new database backup."
+      },
+      {
+        "type": "assertion",
+        "description": "Check for successful response confirming backup creation."
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/backup/list to retrieve the list of backups."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the newly created backup is present in the backup list."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Backup restoration process",
+    "description": "Verify that database backups can be restored correctly without data loss or corruption.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Restore a previously created backup (manual or via API if supported)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify system data matches backed-up state and all operations function as expected."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Real-time insights statistics retrieval",
+    "description": "Verify that parking statistics and metrics are available and accurate through the insights API.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/insights/statistics."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the response provides up-to-date parking statistics and analytics."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Parking ticket creation and retrieval",
+    "description": "Test that parking tickets can be created on vehicle entry and retrieved later.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/tickets with valid vehicle and parking data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify ticket is created with correct status 'active'."
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/tickets to retrieve tickets."
+      },
+      {
+        "type": "assertion",
+        "description": "Check response contains the created ticket with accurate details."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Ticket status update on payment and cancellation",
+    "description": "Verify tickets correctly update status to 'paid' upon payment and 'cancelled' when appropriate.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger vehicle exit to mark ticket as paid."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure ticket status is updated to 'paid'."
+      },
+      {
+        "type": "action",
+        "description": "Simulate ticket cancellation action (e.g. cancel unpaid ticket)."
+      },
+      {
+        "type": "assertion",
+        "description": "Check ticket status is updated to 'cancelled'."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Input validation and error handling for all APIs",
+    "description": "Verify that invalid or missing data inputs for all API endpoints return appropriate error messages.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send requests with missing mandatory fields or invalid formats to several endpoints (e.g., /api/auth/login, /api/vehicles/entry, /api/users)."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate response status is 400 Bad Request with helpful validation error messages."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "API response time performance under load",
+    "description": "Verify that 95% of API requests respond within 500ms under normal load conditions.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate concurrent API requests with load testing tool across multiple endpoints."
+      },
+      {
+        "type": "assertion",
+        "description": "Check response time metrics to confirm 95th percentile response times are below 500ms."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Ensure security best practices are enforced",
+    "description": "Test that password encryption, rate limiting, CORS, and HTTP header protections are correctly implemented.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to access endpoints with and without correct headers, high frequency to trigger rate limits."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify passwords are stored encrypted, rate limiting blocks excessive requests, and CORS and security headers are present."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "API documentation completeness and accuracy",
+    "description": "Verify that all API endpoints are documented as per OpenAPI 3.0 and Swagger interface functions correctly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the Swagger/OpenAPI UI for the Parking Backend API."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all endpoints from the PRD are documented with correct parameters, request and response schemas."
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "System uptime and logging verification",
+    "description": "Ensure system maintains 99.5% uptime, and Winston logs capture comprehensive execution and error information.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Monitor system availability over an extended period."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm uptime target is met and logs record relevant operational data and errors for debugging."
+      }
+    ]
+  }
+]

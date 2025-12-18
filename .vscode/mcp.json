@@ -1,0 +1,14 @@
+﻿{
+  "mcpServers": {
+    "testsprite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@testsprite/testsprite-mcp@latest"
+      ],
+      "env": {
+        "TESTSPRITE_API_KEY": "sk-user-tIUvl9HIvQI2ywBzVc2KU2Z84CHV2MzgcWbsmyE4t27JSUIwEXKEnoFcfzgaowcBZZp0QmSvia7TaYNaAYXWO3CRARpBFzg0i3S4IG58578lh21ahsJcJzcwp2BknZYKSSk"
+      }
+    }
+  }
+}

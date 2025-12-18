@@ -34,8 +34,11 @@ const PORT = process.env.PORT || 3000;
  */
 const startServer = async () => {
 
-  try {
+  try { 
+    const startTime = Date.now();
     await testConnection();
+    const endTime = Date.now();
+    const responseTime = (endTime - startTime) / 1000;
 
     /**
      * @description Inicializa el usuario admin
@@ -56,7 +59,8 @@ const startServer = async () => {
       logger.info(`📊 Ambiente: ${process.env.NODE_ENV}`);
       logger.info(`🌐 Health check: http://localhost:${PORT}/health`);
       logger.info(`🌐 Documentación: http://localhost:${PORT}/api-docs`);
-      logger.info('🕐 Servidor configurado con zona horaria:', process.env.TZ);
+      logger.info(`🕐 Servidor configurado con zona horaria: ${process.env.TZ}`);
+      logger.info(`⏱️ Tiempo de respuesta prueba de conexión BD: ${responseTime} segundos`);
     });
 
     /**

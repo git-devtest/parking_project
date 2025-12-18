@@ -9,6 +9,7 @@ const logger = require('./utils/logger');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
+const { checkDatabaseHealth } = require('./config/database');
 
 /**
  * @description Importa las rutas
@@ -93,21 +94,97 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 }));
 
 // ⭐ Versión para tracking
-const APP_VERSION = '2.0.1'; 
+const APP_VERSION = '1.0.0'; 
 console.log(`🚀 Iniciando backend v${APP_VERSION}`);
 
 /**
  * @description Health check
  * @module healthCheck
+ * @returns {Object} Estado de la aplicación
  */
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Servicio funcionando correctamente',
+app.get('/health', async (req, res) => {
+  const dbHealth = await checkDatabaseHealth();
+
+  // Calcular uptime en formato legible
+  const uptimeSeconds = Math.floor(process.uptime());
+  const hours = Math.floor(uptimeSeconds / 3600);
+  const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+  const seconds = uptimeSeconds % 60;
+  const uptimeFormatted = `${hours}h ${minutes}m ${seconds}s`;
+
+  // Determinar el status code según el estado de la DB
+  const statusCode = dbHealth.status === 'connected' ? 200 : 503;
+  const isHealthy = dbHealth.status === 'connected';
+
+  res.status(statusCode).json({
+    success: isHealthy,
+    message: isHealthy ? 'Servicio funcionando correctamente' : 'Servicio no disponible',
     version: APP_VERSION,
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
+    environment: process.env.NODE_ENV || 'development',
+    uptime: uptimeFormatted ,
+    database: {
+      status: dbHealth.status,
+      responseTime: dbHealth.responseTime ? `${dbHealth.responseTime}ms` : null,
+      ...(dbHealth.error && { error: dbHealth.error })
+    },
+    system: {
+      memory: `${Math.round((process.memoryUsage().heapUsed / process.memoryUsage().heapTotal) * 100)}%`,
+      platform: process.platform,
+      nodeVersion: process.version
+    }
   });
+});
+
+/**
+ * @description Health check detallado para monitoreo interno
+ * @route GET /health/detailed
+ */
+app.get('/health/detailed', async (req, res) => {
+  const dbHealth = await checkDatabaseHealth();
+  
+  const uptimeSeconds = process.uptime();
+  const memoryUsage = process.memoryUsage();
+
+  const healthData = {
+    service: {
+      status: dbHealth.status === 'connected' ? 'operational' : 'degraded',
+      version: APP_VERSION,
+      environment: process.env.NODE_ENV || 'development',
+      timestamp: new Date().toISOString(),
+      uptime: {
+        seconds: Math.floor(uptimeSeconds),
+        formatted: `${Math.floor(uptimeSeconds / 3600)}h ${Math.floor((uptimeSeconds % 3600) / 60)}m ${Math.floor(uptimeSeconds % 60)}s`
+      }
+    },
+    database: {
+      status: dbHealth.status,
+      responseTime: dbHealth.responseTime ? `${dbHealth.responseTime}ms` : null,
+      ...(dbHealth.pool && {
+        pool: {
+          total: dbHealth.pool.total,
+          idle: dbHealth.pool.idle,
+          waiting: dbHealth.pool.waiting
+        }
+      }),
+      ...(dbHealth.error && { error: dbHealth.error })
+    },
+    system: {
+      platform: process.platform,
+      nodeVersion: process.version,
+      memory: {
+        heapUsed: `${Math.round(memoryUsage.heapUsed / 1024 / 1024)} MB`,
+        heapTotal: `${Math.round(memoryUsage.heapTotal / 1024 / 1024)} MB`,
+        rss: `${Math.round(memoryUsage.rss / 1024 / 1024)} MB`,
+        external: `${Math.round(memoryUsage.external / 1024 / 1024)} MB`,
+        percentage: `${Math.round((memoryUsage.heapUsed / memoryUsage.heapTotal) * 100)}%`
+      },
+      cpu: process.cpuUsage()
+    }
+  };
+
+  const statusCode = dbHealth.status === 'connected' ? 200 : 503;
+  res.status(statusCode).json(healthData);
 });
 
 /**

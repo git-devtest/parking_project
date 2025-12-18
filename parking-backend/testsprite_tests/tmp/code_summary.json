@@ -1,0 +1,148 @@
+{
+  "project_name": "Parking Backend",
+  "project_type": "REST API Backend",
+  "description": "Sistema de gestión y cobro de tarifas de estacionamiento con autenticación JWT",
+  "tech_stack": {
+    "runtime": "Node.js",
+    "framework": "Express.js 5.1.0",
+    "database": "MySQL 8.0+",
+    "orm_database_client": "mysql2",
+    "authentication": "JWT (jsonwebtoken 9.0.2)",
+    "password_encryption": "bcryptjs 3.0.3",
+    "api_documentation": "Swagger/OpenAPI 3.0",
+    "logging": "Winston 3.18.3",
+    "security": "Helmet 8.1.0, CORS, Rate Limiting",
+    "validation": "Express Validator 7.3.0, Joi 18.0.2",
+    "testing": "Jest, TestSprite",
+    "development_tools": "Nodemon, JSDoc"
+  },
+  "main_features": [
+    {
+      "name": "Autenticación y Autorización",
+      "description": "Sistema JWT con roles de usuario (admin, operator)",
+      "endpoints": [
+        "POST /api/auth/login",
+        "POST /api/auth/register",
+        "POST /api/auth/logout"
+      ]
+    },
+    {
+      "name": "Gestión de Vehículos",
+      "description": "Registro de entrada/salida de vehículos al estacionamiento",
+      "endpoints": [
+        "GET /api/vehicles",
+        "POST /api/vehicles",
+        "PUT /api/vehicles/:id",
+        "DELETE /api/vehicles/:id"
+      ]
+    },
+    {
+      "name": "Gestión de Tickets",
+      "description": "Creación y gestión de tickets de estacionamiento",
+      "endpoints": [
+        "GET /api/tickets",
+        "POST /api/tickets",
+        "PUT /api/tickets/:id",
+        "DELETE /api/tickets/:id"
+      ]
+    },
+    {
+      "name": "Reportes",
+      "description": "Generación de reportes de ingresos y estadísticas",
+      "endpoints": [
+        "GET /api/reports",
+        "POST /api/reports/generate"
+      ]
+    },
+    {
+      "name": "Gestión de Usuarios",
+      "description": "CRUD de usuarios con control de roles",
+      "endpoints": [
+        "GET /api/users",
+        "POST /api/users",
+        "PUT /api/users/:id",
+        "DELETE /api/users/:id"
+      ]
+    },
+    {
+      "name": "Auditoría",
+      "description": "Registro de cambios y acciones de usuarios",
+      "endpoints": [
+        "GET /api/audit",
+        "POST /api/audit"
+      ]
+    },
+    {
+      "name": "Backup y Restauración",
+      "description": "Backup de base de datos en SQL y JSON",
+      "endpoints": [
+        "GET /api/backups",
+        "POST /api/backups/create",
+        "POST /api/backups/restore"
+      ]
+    },
+    {
+      "name": "Información del Sistema",
+      "description": "Endpoints sobre el estado y versión de la aplicación",
+      "endpoints": [
+        "GET /api/about"
+      ]
+    },
+    {
+      "name": "Insights / Estadísticas",
+      "description": "Análisis y estadísticas del sistema",
+      "endpoints": [
+        "GET /api/insights"
+      ]
+    }
+  ],
+  "core_modules": {
+    "controllers": [
+      "aboutController",
+      "auditController",
+      "authController",
+      "backupController",
+      "insightsController",
+      "reportController",
+      "ticketController",
+      "userController",
+      "vehicleController"
+    ],
+    "services": [
+      "aboutService",
+      "auditService",
+      "backupSqlService",
+      "reportService",
+      "ticketService",
+      "userService",
+      "vehicleService"
+    ],
+    "middleware": [
+      "auth.js - Validación JWT",
+      "authValidation.js - Validación de credenciales",
+      "errorHandler.js - Manejo centralizado de errores",
+      "validation.js - Validación de datos"
+    ]
+  },
+  "security_features": [
+    "Autenticación JWT",
+    "Control de acceso basado en roles (RBAC)",
+    "Rate limiting",
+    "CORS configurado",
+    "Helmet para headers de seguridad",
+    "Encriptación de contraseñas con bcryptjs",
+    "Validación y sanitización de entrada"
+  ],
+  "database_operations": [
+    "CRUD de vehículos",
+    "CRUD de tickets",
+    "CRUD de usuarios",
+    "Registro de auditoría",
+    "Generación de reportes",
+    "Backup y restauración de BD"
+  ],
+  "api_documentation": "Swagger/OpenAPI 3.0 disponible en /api-docs",
+  "logging": "Winston para logging de eventos y errores",
+  "error_handling": "Middleware centralizado de manejo de errores",
+  "version": "1.0.0"
+}

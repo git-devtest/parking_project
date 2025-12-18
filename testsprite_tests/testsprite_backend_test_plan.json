@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "post api auth login user login with valid credentials",
+    "description": "Test the user login endpoint with valid username and password to ensure successful authentication and JWT token issuance."
+  },
+  {
+    "id": "TC002",
+    "title": "post api auth logout user logout with valid token",
+    "description": "Test the user logout endpoint with a valid JWT token to verify successful session termination and token invalidation."
+  },
+  {
+    "id": "TC003",
+    "title": "post api vehicles entry register vehicle entry",
+    "description": "Test the vehicle entry registration endpoint to ensure a vehicle can be successfully registered as entering the parking lot."
+  },
+  {
+    "id": "TC004",
+    "title": "post api vehicles exit register vehicle exit and calculate fees",
+    "description": "Test the vehicle exit registration endpoint to verify correct vehicle exit processing and accurate fee calculation."
+  },
+  {
+    "id": "TC005",
+    "title": "get api vehicles parked get list of currently parked vehicles",
+    "description": "Test the endpoint to retrieve the list of currently parked vehicles, ensuring accurate and up-to-date data is returned."
+  },
+  {
+    "id": "TC006",
+    "title": "get api vehicles capacity get parking capacity status",
+    "description": "Test the parking capacity status endpoint to verify it returns correct information about current parking availability and capacity."
+  },
+  {
+    "id": "TC007",
+    "title": "get api vehicles history get complete vehicle history",
+    "description": "Test the vehicle history endpoint to ensure it returns a complete and accurate record of all vehicle entries and exits."
+  },
+  {
+    "id": "TC008",
+    "title": "get api reports daily get daily report",
+    "description": "Test the daily report generation endpoint to verify it returns accurate and timely parking usage and income data for the day."
+  },
+  {
+    "id": "TC009",
+    "title": "get api users get all users",
+    "description": "Test the endpoint to retrieve all users, ensuring it returns complete user data with correct role assignments."
+  },
+  {
+    "id": "TC010",
+    "title": "post api users create new user",
+    "description": "Test the user creation endpoint to verify new users can be created with valid data and assigned appropriate roles."
+  }
+]

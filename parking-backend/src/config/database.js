@@ -91,7 +91,44 @@ const closePool = async () => {
 };
 
 /**
+ * @description Función para obtener estadísticas del pool
+ * @returns {Object} Estadísticas del pool
+ */
+const getPoolStats = () => {
+  return {
+    total: pool.totalCount,
+    idle: pool.idleCount,
+    waiting: pool.waitingCount
+  };
+};
+
+/**
+ * @description Función para verificar el estado de la conexión
+ * @returns {Object} Estado de la conexión
+ */
+const checkDatabaseHealth = async () => {
+  const startTime = Date.now();
+  
+  try {
+    await pool.query('SELECT 1');
+    const endTime = Date.now();
+    
+    return {
+      status: 'connected',
+      responseTime: endTime - startTime,
+      pool: getPoolStats()
+    };
+  } catch (error) {
+    return {
+      status: 'error',
+      error: error.message,
+      responseTime: null
+    };
+  }
+};
+
+/**
  * @description Exportar la pool de conexiones y las funciones
  * @returns {Object} pool de conexiones y las funciones
  */
-module.exports = { pool, testConnection, closePool };
+module.exports = { pool, testConnection, closePool, getPoolStats, checkDatabaseHealth };

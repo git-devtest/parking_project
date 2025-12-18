@@ -1,0 +1,17 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:4200",
+  "loginUser": "admin",
+  "loginPassword": "admin123",
+  "executionArgs": {
+    "projectName": "parking-project",
+    "projectPath": "d:\\parking-project",
+    "testIds": [],
+    "additionalInstruction": "Ejecutar pruebas E2E del frontend Angular. Las pruebas incluyen: 1) Login con credenciales admin/admin123, 2) Navegación a dashboard, 3) Entrada de vehículos, 4) Salida de vehículos, 5) Generación de reportes. Usar usuarios de prueba y validar funcionalidades críticas.",
+    "envs": {
+      "API_KEY": "sk-user-tIUvl9HIvQI2ywBzVc2KU2Z84CHV2MzgcWbsmyE4t27JSUIwEXKEnoFcfzgaowcBZZp0QmSvia7TaYNaAYXWO3CRARpBFzg0i3S4IG58578lh21ahsJcJzcwp2BknZYKSSk"
+    }
+  }
+}

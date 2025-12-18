@@ -13,15 +13,17 @@ Este README actúa como guía principal para entender la arquitectura global, le
 ├── parking-backend/      # Código del backend (API REST, lógica de negocios, DB)   
 ├── parking-frontend/     # Código del frontend (Angular)   
 ├── Modelo BD.mwb         # Modelo de base de datos (MySQL Workbench)   
-├── Modelo ER.png         # Diagrama ER de la base de datos   
+├── Modelo ER.png         # Diagrama ER de la base de datos
+├── TESTING.md            # Guía completa de testing con TestSprite
 └── README.md             # Este archivo (documentación general del proyecto)
 ```
 
 ## Tecnologías principales  
 
-- **Backend**: Node.js, Express, (posiblemente MySQL / MySQL2 / otro cliente SQL)  
-- **Frontend**: Angular 20, TypeScript, HTML, CSS, (Bootstrap u otro framework de estilos si lo usas)  
-- **Base de datos**: Modelo relacional definido (puedes usar MySQL o variante compatible)  
+- **Backend**: Node.js, Express, MySQL (mysql2)  
+- **Frontend**: Angular 20, TypeScript, Angular Material  
+- **Base de datos**: MySQL 8.0+  
+- **Testing**: TestSprite (AI-powered), Jest, Karma/Jasmine  
 
 ## Cómo correr el proyecto (modo desarrollo)  
 Asegúrate de tener instalados Node.js, npm (o yarn), y un servidor de base de datos compatible (MySQL u otro).
@@ -45,6 +47,26 @@ npm install          # Instala dependencias del frontend
 ```
 Asegúrate de que la configuración del frontend (URL de la API, puertos) coincide con la del backend.   
 Abre tu navegador en http://localhost:4200 (o el puerto configurado) para usar la app.
+
+### 3. Testing con TestSprite
+
+El proyecto incluye testing automatizado con **TestSprite**, un framework de testing impulsado por IA.
+
+```bash
+# Ver la guía completa de testing
+cat TESTING.md
+
+# Ejecutar tests del backend
+cd parking-backend
+npm run test:testsprite:api
+
+# Ejecutar tests del frontend
+cd parking-frontend
+npm run test:testsprite:e2e
+```
+
+**📖 Para más detalles sobre testing, consulta [TESTING.md](TESTING.md)**  
+**🚀 Guía rápida en español: [COMO-EJECUTAR-PRUEBAS.md](COMO-EJECUTAR-PRUEBAS.md)**
 
 ## Funcionalidades / Qué puedes hacer   
 1. Registrar vehículos que ingresan y salen del parqueadero.
